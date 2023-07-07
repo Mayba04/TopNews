@@ -7,6 +7,10 @@ string connStr = builder.Configuration.GetConnectionString("DefaulConnection");
 //Databse context
 builder.Services.AddDbCotext(connStr);
 
+//Add Infrastructure
+
+builder.Services.AddInfastructuresServices();
+
 // Add services to the container.
 builder.Services.AddControllersWithViews();
 
