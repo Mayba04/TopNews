@@ -1,0 +1,14 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+    <partial name="./Login/_Header.cshtml" />
+</head>
+<body class="hold-transition login-page">
+    <div login-box>
+        @RenderBody()
+       
+    </div>
+    <partial name="./Dasboard/Footerincludes.cshtml" />
+    @await RenderSectionAsync("Scripts", required: false)
+</body>
+</html>
