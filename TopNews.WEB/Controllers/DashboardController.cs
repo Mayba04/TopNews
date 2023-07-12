@@ -1,7 +1,9 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 
 namespace TopNews.WEB.Controllers
 {
+    [Authorize]
     public class DashboardController : Controller
     {
         public IActionResult Index()
@@ -9,6 +11,7 @@ namespace TopNews.WEB.Controllers
             return View();
         }
 
+        [AllowAnonymous]
         public IActionResult Login()
         {
             return View();
