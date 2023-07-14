@@ -25,6 +25,11 @@ namespace TopNews.WEB.Controllers
         [AllowAnonymous]//GET
         public IActionResult Login()
         {
+            var user = HttpContext.User.Identity.IsAuthenticated;
+            if (user)
+            {
+                return RedirectToAction(nameof(Index));
+            }
             return View();
         }
      
@@ -53,15 +58,22 @@ namespace TopNews.WEB.Controllers
         [HttpPost]
         public async Task<IActionResult>  Logout()
         {
+            ServiceResponse result = await _userService.SignOutAsync();
+            if (result.Success == true) 
+            {
+                return RedirectToAction(nameof(Login));
+            }
+            return View();
 
             //await HttpContext.SignOutAsync();
 
-            foreach (var cookie in Request.Cookies.Keys)
-            {
-                Response.Cookies.Delete(cookie);
-            }
 
-            return RedirectToAction(nameof(Login));
+            //foreach (var cookie in Request.Cookies.Keys)
+            //{
+            //    Response.Cookies.Delete(cookie);
+            //}
+
+
         }
 
     }

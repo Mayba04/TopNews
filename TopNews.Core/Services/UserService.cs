@@ -67,6 +67,19 @@ namespace TopNews.Core.Services
                 Success = false,
                 Message = "User or password incorrect."
             };
+
+            
         }
+
+        public async Task<ServiceResponse> SignOutAsync()
+        {
+            await _signInManager.SignOutAsync();
+            return new ServiceResponse
+            {
+                Success = true,
+                Message = "false"
+            };
+        }
+
     }
 }
