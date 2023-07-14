@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Authorization;
+﻿using Microsoft.AspNetCore.Authentication;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using TopNews.Core.DTOs.Login;
 using TopNews.Core.Services;
@@ -30,7 +31,6 @@ namespace TopNews.WEB.Controllers
         [AllowAnonymous]//POST
         [HttpPost]
         [ValidateAntiForgeryToken]
-
         public async Task<IActionResult> Login(LoginDTO model)
         {
             var validator = new LoginUserValidation();
@@ -48,6 +48,20 @@ namespace TopNews.WEB.Controllers
             }
             ViewBag.AuthError = validationResult.Errors[0];
             return View(model);
+        }
+
+        [HttpPost]
+        public async Task<IActionResult>  Logout()
+        {
+
+            //await HttpContext.SignOutAsync();
+
+            foreach (var cookie in Request.Cookies.Keys)
+            {
+                Response.Cookies.Delete(cookie);
+            }
+
+            return RedirectToAction(nameof(Login));
         }
 
     }
