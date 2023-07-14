@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using TopNews.Core.DTOs.Login;
+using TopNews.Core.Services;
 using TopNews.Core.Validation.User;
 
 namespace TopNews.WEB.Controllers
@@ -8,6 +9,13 @@ namespace TopNews.WEB.Controllers
     [Authorize]
     public class DashboardController : Controller
     {
+
+        private readonly UserService _userService;
+        public DashboardController(UserService userService)
+        {
+            _userService = userService;
+        }
+
         public IActionResult Index()
         {
             return View();
@@ -23,17 +31,23 @@ namespace TopNews.WEB.Controllers
         [HttpPost]
         [ValidateAntiForgeryToken]
 
-        public IActionResult Login(LoginDTO model)
+        public async Task<IActionResult> Login(LoginDTO model)
         {
             var validator = new LoginUserValidation();
-            var validatotionResult = validator.Validate(model);
-            if (validatotionResult.IsValid) 
+            var validationResult = validator.Validate(model);
+            if (validationResult.IsValid)
             {
-                return View();
+                ServiceResponse result = await _userService.LoginUserAsync(model);
+                if (result.Success)
+                {
+                    return RedirectToAction(nameof(Index));
+                }
+
+                ViewBag.AuthError = result.Message;
+                return View(model);
             }
-            ViewBag.AuthError = validatotionResult.Errors[0];
+            ViewBag.AuthError = validationResult.Errors[0];
             return View(model);
-            
         }
 
     }
