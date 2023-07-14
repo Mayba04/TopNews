@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using TopNews.Core.AutoMapper.User;
 using TopNews.Core.Services;
 
 namespace TopNews.Core
@@ -13,6 +14,11 @@ namespace TopNews.Core
         public static void AddCoreServices(this IServiceCollection services)
         {
             services.AddTransient<UserService>();
+        }
+
+        public static void AddMapping(this IServiceCollection services) 
+        {
+            services.AddAutoMapper(typeof(AutoMapperUserProfile));
         }
     }
 }

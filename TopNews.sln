@@ -3,18 +3,18 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.6.33815.320
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TopNews.WEB", "TopNews.WEB\TopNews.WEB.csproj", "{C8499EBC-AADB-4016-B44F-143E0CB8F779}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TopNews.WEB", "TopNews.WEB\TopNews.WEB.csproj", "{C8499EBC-AADB-4016-B44F-143E0CB8F779}"
 	ProjectSection(ProjectDependencies) = postProject
 		{2C32BB61-07AA-44B4-A622-6AB6079427F2} = {2C32BB61-07AA-44B4-A622-6AB6079427F2}
 		{98CBFA98-F1B8-4D7D-8F06-141AEA201B72} = {98CBFA98-F1B8-4D7D-8F06-141AEA201B72}
 	EndProjectSection
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TopNews.Infrastructure", "TopNews.Infrastructure\TopNews.Infrastructure.csproj", "{98CBFA98-F1B8-4D7D-8F06-141AEA201B72}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TopNews.Infrastructure", "TopNews.Infrastructure\TopNews.Infrastructure.csproj", "{98CBFA98-F1B8-4D7D-8F06-141AEA201B72}"
 	ProjectSection(ProjectDependencies) = postProject
 		{2C32BB61-07AA-44B4-A622-6AB6079427F2} = {2C32BB61-07AA-44B4-A622-6AB6079427F2}
 	EndProjectSection
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TopNews.Core", "TopNews.Core\TopNews.Core.csproj", "{2C32BB61-07AA-44B4-A622-6AB6079427F2}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TopNews.Core", "TopNews.Core\TopNews.Core.csproj", "{2C32BB61-07AA-44B4-A622-6AB6079427F2}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

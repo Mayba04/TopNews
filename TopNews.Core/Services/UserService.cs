@@ -1,10 +1,13 @@
-﻿using Microsoft.AspNetCore.Identity;
+﻿using AutoMapper;
+using Microsoft.AspNetCore.Identity;
+using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using TopNews.Core.DTOs.Login;
+using TopNews.Core.DTOs.User;
 using TopNews.Core.Entities.User;
 
 namespace TopNews.Core.Services
@@ -13,9 +16,11 @@ namespace TopNews.Core.Services
     {
         private readonly UserManager<AppUser> _userManager;
         private readonly SignInManager<AppUser> _signInManager;
+        private readonly IMapper _mapper;
 
-        public UserService(UserManager<AppUser> userManager, SignInManager<AppUser> signInManager)
+        public UserService(UserManager<AppUser> userManager, SignInManager<AppUser> signInManager, IMapper mapper)
         {
+            _mapper = mapper;
             _userManager = userManager;
             _signInManager = signInManager;
         }
@@ -78,6 +83,34 @@ namespace TopNews.Core.Services
             {
                 Success = true,
                 Message = "false"
+            };
+        }
+
+        public async Task<ServiceResponse> GetAllAsync()
+        {
+            List<AppUser> users = await _userManager.Users.ToListAsync();
+            List<UserDTO> mappedUsers = users.Select(u => _mapper.Map<AppUser,UserDTO>(u)).ToList();
+
+            for (int j = 0; j < users.Count; j++)
+            {
+                var userDto = _mapper.Map<AppUser, UserDTO>(users[j]);
+                var roles = await _userManager.GetRolesAsync(users[j]);
+                for (var i = 0; i < roles.Count; i++)
+                {
+                    if (j == i)
+                    {
+                        userDto.Role = roles[i];
+                    }
+                }
+                mappedUsers[j] = userDto;
+            }
+            //write code here!
+
+            return new ServiceResponse
+            {
+                Success = true,
+                Message = "All users loaded.",
+                Payload = mappedUsers
             };
         }
 

@@ -73,7 +73,12 @@ namespace TopNews.WEB.Controllers
             //    Response.Cookies.Delete(cookie);
             //}
 
+        }
 
+        public async Task<IActionResult> GetAll()
+        {
+            var result = await _userService.GetAllAsync();
+            return View(result.Payload);
         }
 
     }
