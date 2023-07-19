@@ -2,8 +2,10 @@
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using TopNews.Core.DTOs.Login;
+using TopNews.Core.DTOs.User;
 using TopNews.Core.Services;
 using TopNews.Core.Validation.User;
+using TopNews.WEB.Models.ViewModels;
 
 namespace TopNews.WEB.Controllers
 {
@@ -80,6 +82,21 @@ namespace TopNews.WEB.Controllers
             var result = await _userService.GetAllAsync();
             return View(result.Payload);
         }
+
+        public async Task<IActionResult> Profile(string Id)
+        {
+            var result = await _userService.GetUserByIdAsync(Id);
+            if (result.Success)
+            {
+                UpdateProfileVM profile = new UpdateProfileVM()
+                {
+                    UserInfo = (UpdateUserDTO)result.Payload
+                };
+                return View(profile);
+            }
+            return View();
+        }
+
 
     }
 }

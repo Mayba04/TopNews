@@ -114,5 +114,27 @@ namespace TopNews.Core.Services
             };
         }
 
+        public async Task<ServiceResponse> GetUserByIdAsync(string Id)
+        {
+            var user = await _userManager.FindByIdAsync(Id);
+            if (user == null)
+            {
+                return new ServiceResponse
+                {
+                    Success = true,
+                    Message = "User or password incorrect."
+                };
+            }
+            var roles = await _userManager.GetRolesAsync(user);
+            var mappedUser = _mapper.Map<AppUser, UpdateUserDTO>(user);
+            mappedUser.Role = roles[0];
+            return new ServiceResponse
+            {
+                Success = true,
+                Message = "User successfully loaded",
+                Payload = mappedUser
+            };
+        }
+
     }
 }

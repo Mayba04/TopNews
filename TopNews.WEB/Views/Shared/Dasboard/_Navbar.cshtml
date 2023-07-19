@@ -1,3 +1,10 @@
+﻿﻿@using Microsoft.AspNetCore.Identity;
+@using TopNews.Core.Entities.User;
+@inject UserManager<AppUser> UserManager
+
+@{
+    var user = await UserManager.GetUserAsync(User);
+}
 ﻿
     <!-- Navbar -->
     <nav class="main-header navbar navbar-expand navbar-white navbar-light">
@@ -38,9 +45,11 @@
 
     <!-- Messages Dropdown Menu -->
         <ul class="navbar-nav ml-auto">
-            <li class="nav-item">
-                <button class="btn btn-primary">Profile</button>
-            </li>
+           
+                <li class="nav-item">
+                <a asp-action="Profile" asp-route-id="@user.Id" class="btn btn-primary">Profile</a>
+                </li>
+            
             <form asp-action="Logout">
                 <li class="nav-item ml-2">
                     <button class="btn btn-primary">Log out</button>
