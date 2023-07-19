@@ -1,60 +1,117 @@
-﻿@using TopNews.WEB.Models.ViewModels
+﻿﻿@using Microsoft.AspNetCore.Identity;
+@using TopNews.Core.Entities.User;
+@using TopNews.WEB.Models.ViewModels
 @model UpdateProfileVM
 
-<div class="content-wrapper">
-    <h1>@Model.UserInfo.Email</h1>
-    <section class="content">
-      <div class="container-fluid">
-        <div class="row">
-          <!-- left column -->
-          <div class="col-md-6">
-            <!-- general form elements -->
-            <div class="card card-primary">
-              <div class="card-header">
-                <h3 class="card-title">Quick Example</h3>
-              </div>
-              <!-- /.card-header -->
-              <!-- form start -->
-              <form>
-                <div class="card-body">
-                  <div class="form-group">
-                    <label for="exampleInputEmail1">Email address</label>
-                    <input type="email" class="form-control" id="exampleInputEmail1" placeholder="Enter email">
-                  </div>
-                  <div class="form-group">
-                    <label for="exampleInputPassword1">Password</label>
-                    <input type="password" class="form-control" id="exampleInputPassword1" placeholder="Password">
-                  </div>
-                  <div class="form-group">
-                    <label for="exampleInputFile">File input</label>
-                    <div class="input-group">
-                      <div class="custom-file">
-                        <input type="file" class="custom-file-input" id="exampleInputFile">
-                        <label class="custom-file-label" for="exampleInputFile">Choose file</label>
-                      </div>
-                      <div class="input-group-append">
-                        <span class="input-group-text">Upload</span>
-                      </div>
-                    </div>
-                  </div>
-                  <div class="form-check">
-                    <input type="checkbox" class="form-check-input" id="exampleCheck1">
-                    <label class="form-check-label" for="exampleCheck1">Check me out</label>
-                  </div>
-                </div>
-                <!-- /.card-body -->
+@inject UserManager<AppUser> UserManager;
 
-                <div class="card-footer">
-                  <button type="submit" class="btn btn-primary">Submit</button>
+@{
+    var user = await UserManager.GetUserAsync(User);
+    var email = await UserManager.GetEmailAsync(user);
+}
+
+<div class="content-wrapper">
+    @*<h1>@Model.UserInfo.Email</h1>*@
+    <section class="content-header">
+        <div class="container-fluid">
+            <div class="row mb-2">
+                <div class="col-sm-6">
+                    <h1>User managament</h1>
                 </div>
-              </form>
+                <div class="col-sm-6">
+                    <ol class="breadcrumb float-sm-right">
+                        <li class="breadcrumb-item"><a asp-action="Index">Home</a></li>
+                        <li class="breadcrumb-item active">User profile</li>
+                    </ol>
+                </div>
             </div>
-            <!-- /.card -->
-              <!-- /.card-body -->
-          </div>
-            <!-- /.card -->
+        </div><!-- /.container-fluid -->
+    </section>
+    <section class="content">
+        <div class="container-fluid">
+            <div class="row">
+                <!-- First column -->
+                <div class="col-md-6">
+                    <!-- General form elements -->
+                    <div class="card card-primary">
+                        <div class="card-header">
+                            <h3 class="card-title">Quick Example</h3>
+                        </div>
+                        <form asp-action="Profile">
+                            <div class="card-body">
+                                <div class="form-group">
+                                    <label for="idInput">Id</label>
+                                    <input type="text" class="form-control" id="idInput" placeholder="Enter Id">
+                                </div>
+                                <div class="form-group">
+                                    <label for="firstNameInput">First Name</label>
+                                    <input type="text" class="form-control" id="firstNameInput" placeholder="Enter First Name">
+                                </div>
+                                <div class="form-group">
+                                    <label for="lastNameInput">Last Name</label>
+                                    <input type="text" class="form-control" id="lastNameInput" placeholder="Enter Last Name">
+                                </div>
+                                <div class="form-group">
+                                    <label for="emailInput">Email</label>
+                                    <input type="email" class="form-control" id="emailInput" placeholder="Enter Email">
+                                </div>
+                                <div class="form-group">
+                                    <label for="phoneNumberInput">Phone Number</label>
+                                    <input type="text" class="form-control" id="phoneNumberInput" placeholder="Enter Phone Number">
+                                </div>
+                                <div class="form-group">
+                                    <label for="roleInput">Role</label>
+                                    <input type="text" class="form-control" id="roleInput" placeholder="Enter Role">
+                                </div>
+                            </div>
+                            <div class="card-footer">
+                                <button type="submit" class="btn btn-primary">Submit</button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+
+                <!-- Second column -->
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-md-5 offset-3">
+                            <div class="card card-danger">
+                                <div class="card-header">
+                                    <h3 class="card-title">Update password</h3>
+                                </div>
+                                <!-- /.card-header -->
+                                <!-- form start -->
+                                @if (@ViewBag.UpdatePasswordError != null)
+                                {
+                                    <span class="text-danger mt-3">@ViewBag.UpdatePasswordError</span>
+                                }
+                                <form method="post" asp-action="Profile">
+                                    <div class="card-body">
+                                        <input type="hidden" name="Id" asp-for="=@user.Id" value=@user.Id />
+                                        <div class="form-group">
+                                            <label for="Password">Old Password</label>
+                                            <input type="password" asp-for="@Model.UsserPassword.OldPassword" name="oldPassword" class="form-control" placeholder="Old password" />
+                                        </div>
+                                        <div class="form-group">
+                                            <label for="Password">New Password</label>
+                                            <input type="password" asp-for="@Model.UsserPassword.NewPassword" name="newPassword" class="form-control" placeholder="New Password">
+                                        </div>
+                                        <div class="form-group">
+                                            <label for="ConfirmPassword">Confirm Password</label>
+                                            <input type="password" name="confirmPassword" asp-for="@Model.UsserPassword.ConfirmPassword" class="form-control" placeholder="Confirm Password">
+                                        </div>
+                                    </div>
+                                    <!-- /.card-body -->
+                                    <div class="card-footer">
+                                        <button type="submit" class="btn btn-danger">Update</button>
+                                    </div>
+                                </form>
+                            </div>
+                            <hr />
+                        </div>
+                    </div>
+                </div>
+            </div>
         </div>
-          <!--/.col (right) -->
-      </div>
     </section>
 </div>

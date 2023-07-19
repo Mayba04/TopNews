@@ -97,6 +97,29 @@ namespace TopNews.WEB.Controllers
             return View();
         }
 
+        [HttpPost]
+        [ValidateAntiForgeryToken]
 
+        public async Task<IActionResult> Profile(UpdatePasswordDTO model)
+        {
+            var validator = new UpdatePasswordValidation();// model.GetType();
+            var validationResult = await validator.ValidateAsync(model);
+            if (validationResult.IsValid)
+            {
+                var result = await _userService.UpdatePasswordAsync(model);
+                if (result.Success)
+                {
+                    return RedirectToAction(nameof(Login));
+                }
+
+                ViewBag.UpdatePasswordError = result.Payload;
+                return View();
+
+            }
+            ViewBag.UpdatePasswordError = validationResult.Errors[0];
+            return View();
+        }
     }
+
+    
 }

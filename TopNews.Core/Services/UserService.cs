@@ -1,5 +1,6 @@
 ﻿using AutoMapper;
 using Microsoft.AspNetCore.Identity;
+
 using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
@@ -133,6 +134,45 @@ namespace TopNews.Core.Services
                 Success = true,
                 Message = "User successfully loaded",
                 Payload = mappedUser
+            };
+        }
+
+        public async Task<ServiceResponse> UpdatePasswordAsync(UpdatePasswordDTO model)
+        {
+            var user  = await _userManager.FindByIdAsync(model.Id);
+            if(user == null) 
+            {
+                return new ServiceResponse
+                {
+                    Success = true,
+                    Message = "User or password incorrect."
+                };
+            }
+
+            IdentityResult result = await _userManager.ChangePasswordAsync(user, model.OldPassword, model.NewPassword);
+            if(result.Succeeded) 
+            {
+                await _signInManager.SignOutAsync();
+
+                return new ServiceResponse 
+                {
+                    Success = true,
+                    Message = "Passsword successfully updated."
+                };
+            }
+
+            List<IdentityError> errorList = result.Errors.ToList();
+            string errors = "";
+            foreach (var error in errorList) 
+            {
+                errors = errors + error.Description.ToList();
+            }
+
+            return new ServiceResponse
+            {
+                Success = false,
+                Message = "Error",
+                Payload = errors
             };
         }
 
