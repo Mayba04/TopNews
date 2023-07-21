@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Authentication;
+﻿using FluentValidation;
+using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using TopNews.Core.DTOs.Login;
@@ -97,11 +98,14 @@ namespace TopNews.WEB.Controllers
             return View();
         }
 
+        
+
         [HttpPost]
         [ValidateAntiForgeryToken]
 
         public async Task<IActionResult> Profile(UpdatePasswordDTO model)
         {
+
             var validator = new UpdatePasswordValidation();// model.GetType();
             var validationResult = await validator.ValidateAsync(model);
             if (validationResult.IsValid)
@@ -117,6 +121,33 @@ namespace TopNews.WEB.Controllers
 
             }
             ViewBag.UpdatePasswordError = validationResult.Errors[0];
+            return View();
+        }
+
+        
+        public async Task<IActionResult> Create()
+        {
+            return View();
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> Create(CreateUserDTO model)
+        {
+            var validator = new CreateUserValidation();
+            var validationResult = await validator.ValidateAsync(model);
+            if (validationResult.IsValid)
+            {
+                var result = await _userService.Create(model);
+                if (result.Success)
+                {
+                    return RedirectToAction(nameof(GetAll));
+                }
+
+                ViewBag.AuthError = result.Payload;
+                return View();
+            }
+            ViewBag.AuthError = validationResult.Errors[0];
             return View();
         }
     }

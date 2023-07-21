@@ -10,6 +10,7 @@ using System.Threading.Tasks;
 using TopNews.Core.DTOs.Login;
 using TopNews.Core.DTOs.User;
 using TopNews.Core.Entities.User;
+using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace TopNews.Core.Services
 {
@@ -74,7 +75,7 @@ namespace TopNews.Core.Services
                 Message = "User or password incorrect."
             };
 
-            
+
         }
 
         public async Task<ServiceResponse> SignOutAsync()
@@ -89,23 +90,39 @@ namespace TopNews.Core.Services
 
         public async Task<ServiceResponse> GetAllAsync()
         {
-            List<AppUser> users = await _userManager.Users.ToListAsync();
-            List<UserDTO> mappedUsers = users.Select(u => _mapper.Map<AppUser,UserDTO>(u)).ToList();
+            //List<AppUser> users = await _userManager.Users.ToListAsync();
+            //List<UserDTO> mappedUsers = users.Select(u => _mapper.Map<AppUser, UserDTO>(u)).ToList();
 
-            for (int j = 0; j < users.Count; j++)
+            //for (int j = 0; j < users.Count; j++)
+            //{
+            //    var userDto = _mapper.Map<AppUser, UserDTO>(users[j]);
+            //    var roles = await _userManager.GetRolesAsync(users[j]);
+            //    for (var i = 0; i < roles.Count; i++)
+            //    {
+            //        if (j == i)
+            //        {
+            //            userDto.Role = roles[i];
+            //        }
+            //    }
+            //    mappedUsers[j] = userDto;
+            //}
+            ////write code here!
+
+            //return new ServiceResponse
+            //{
+            //    Success = true,
+            //    Message = "All users loaded.",
+            //    Payload = mappedUsers
+            //};
+
+            List<AppUser> users = await _userManager.Users.ToListAsync();
+
+            List<UserDTO> mappedUsers = users.Select(u => _mapper.Map<AppUser, UserDTO>(u)).ToList();
+
+            for (int i = 0; i < users.Count; i++)
             {
-                var userDto = _mapper.Map<AppUser, UserDTO>(users[j]);
-                var roles = await _userManager.GetRolesAsync(users[j]);
-                for (var i = 0; i < roles.Count; i++)
-                {
-                    if (j == i)
-                    {
-                        userDto.Role = roles[i];
-                    }
-                }
-                mappedUsers[j] = userDto;
+                mappedUsers[i].Role = (await _userManager.GetRolesAsync(users[i])).FirstOrDefault();
             }
-            //write code here!
 
             return new ServiceResponse
             {
@@ -139,8 +156,8 @@ namespace TopNews.Core.Services
 
         public async Task<ServiceResponse> UpdatePasswordAsync(UpdatePasswordDTO model)
         {
-            var user  = await _userManager.FindByIdAsync(model.Id);
-            if(user == null) 
+            var user = await _userManager.FindByIdAsync(model.Id);
+            if (user == null)
             {
                 return new ServiceResponse
                 {
@@ -150,11 +167,11 @@ namespace TopNews.Core.Services
             }
 
             IdentityResult result = await _userManager.ChangePasswordAsync(user, model.OldPassword, model.NewPassword);
-            if(result.Succeeded) 
+            if (result.Succeeded)
             {
                 await _signInManager.SignOutAsync();
 
-                return new ServiceResponse 
+                return new ServiceResponse
                 {
                     Success = true,
                     Message = "Passsword successfully updated."
@@ -163,7 +180,7 @@ namespace TopNews.Core.Services
 
             List<IdentityError> errorList = result.Errors.ToList();
             string errors = "";
-            foreach (var error in errorList) 
+            foreach (var error in errorList)
             {
                 errors = errors + error.Description.ToList();
             }
@@ -176,5 +193,54 @@ namespace TopNews.Core.Services
             };
         }
 
+        public async Task<ServiceResponse> Create(CreateUserDTO model)
+        {
+            var users= await _userManager.FindByEmailAsync(model.Email);
+            if (users != null)
+            {
+                return new ServiceResponse
+                {
+                    Message = "User exists.",
+                    Success = false,
+                };
+            }
+
+            var user = _mapper.Map<CreateUserDTO, AppUser>(model);
+
+            var acount = await _userManager.CreateAsync(user);
+
+            if (!acount.Succeeded)
+            {
+                return new ServiceResponse
+                {
+                    Success = false,
+                    Message = "Error creating"
+                };
+            }
+            
+            var roles = await _userManager.AddToRoleAsync(user, model.Role);
+            if (!roles.Succeeded) 
+            {
+                return new ServiceResponse
+                {
+                    Success = false,
+                    Message = "Error creating"
+                };
+            }
+            List<IdentityError> errorList = roles.Errors.ToList();
+            string errors = "";
+            foreach (var error in errorList)
+            {
+                errors = errors + error.Description.ToList();
+            }
+
+            return new ServiceResponse
+            {
+                Success = false,
+                Message = "Error",
+                Payload = errors
+            };
+
+        }
     }
 }

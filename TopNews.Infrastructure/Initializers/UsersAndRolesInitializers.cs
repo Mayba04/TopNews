@@ -38,6 +38,8 @@ namespace TopNews.Infrastructure.Initializers
                         Name = "Administrator",
                         NormalizedName = "ADMINISTRATOR"
                     });
+
+                  
                     await context.SaveChangesAsync();
 
                     IdentityResult adminResult = userManager.CreateAsync(admin, "Qwerty-1").Result;

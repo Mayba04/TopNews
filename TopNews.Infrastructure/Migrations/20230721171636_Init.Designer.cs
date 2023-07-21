@@ -12,8 +12,8 @@ using TopNews.Infrastructure.Context;
 namespace TopNews.Infrastructure.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    [Migration("20230707154315_Extends Identity user")]
-    partial class ExtendsIdentityuser
+    [Migration("20230721171636_Init")]
+    partial class Init
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
