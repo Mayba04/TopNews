@@ -74,8 +74,6 @@ namespace TopNews.Core.Services
                 Success = false,
                 Message = "User or password incorrect."
             };
-
-
         }
 
         public async Task<ServiceResponse> SignOutAsync()
@@ -144,7 +142,9 @@ namespace TopNews.Core.Services
                 };
             }
             var roles = await _userManager.GetRolesAsync(user);
+
             var mappedUser = _mapper.Map<AppUser, UpdateUserDTO>(user);
+
             mappedUser.Role = roles[0];
             return new ServiceResponse
             {
@@ -240,7 +240,39 @@ namespace TopNews.Core.Services
                 Message = "Error",
                 Payload = errors
             };
-
         }
+
+        public async Task<ServiceResponse> DeleteUserAsync(string Id)
+        {
+            AppUser userdelete = await _userManager.FindByIdAsync(Id);
+            if (userdelete != null)
+            {
+                IdentityResult result = await _userManager.DeleteAsync(userdelete);
+                if (result.Succeeded)
+                {
+                    
+                    return new ServiceResponse
+                    {
+                        Success = true,
+                    };
+                }
+                else
+                {
+                    return new ServiceResponse
+                    {
+                        Success = false,
+                        Message = "Error",
+                        Payload = result.Errors
+                    };
+                }
+            }
+
+            return new ServiceResponse
+            {
+                Success = false,
+                Message = "Success",
+            };
+        }
+
     }
 }

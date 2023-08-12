@@ -1,6 +1,7 @@
 ﻿using FluentValidation;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using TopNews.Core.DTOs.Login;
 using TopNews.Core.DTOs.User;
@@ -150,7 +151,15 @@ namespace TopNews.WEB.Controllers
             ViewBag.AuthError = validationResult.Errors[0];
             return View();
         }
-    }
 
-    
+     
+        public async Task<IActionResult> Delete(string id)
+        {
+            var res = await _userService.GetUserByIdAsync(id);
+            return View(res.Payload);
+           
+        }
+        
+
+    }
 }
