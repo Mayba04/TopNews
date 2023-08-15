@@ -125,7 +125,28 @@ namespace TopNews.WEB.Controllers
             return View();
         }
 
-        
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+
+        public async Task<IActionResult> ChangeProfile(UpdateUserDTO model)
+        {
+            var validator = new UpdateUserValidation();
+            var validationResult = await validator.ValidateAsync(model);
+            if (validationResult.IsValid)
+            {
+                ServiceResponse result = await _userService.ChangeMainInfoUserAsync(model);
+                if (result.Success)
+                {
+                    return View(nameof(Profile), new UpdateProfileVM() { UserInfo = model });
+                }
+                ViewBag.UserUpdateError = result.Payload;
+                return View(nameof(Profile), new UpdateProfileVM() { UserInfo = model });
+            }
+            ViewBag.UserUpdateError = validationResult.Errors[0];
+            return View(nameof(Profile), new UpdateProfileVM() { UserInfo = model });
+        }
+
+
         public async Task<IActionResult> Create()
         {
             return View();
@@ -159,7 +180,15 @@ namespace TopNews.WEB.Controllers
             return View(res.Payload);
            
         }
-        
 
+        public async Task<IActionResult> ConfirmEmail(string userId, string token)
+        {
+            var result = await _userService.ConfirmEmailAsync(userId, token);
+            if (result.Success) 
+            {
+                return Redirect(nameof(SignIn));
+            }
+            return Redirect(nameof(SignIn));
+        }
     }
 }

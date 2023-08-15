@@ -1,7 +1,8 @@
 ﻿using AutoMapper;
 using Microsoft.AspNetCore.Identity;
-
+using Microsoft.AspNetCore.WebUtilities;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Configuration;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -18,13 +19,17 @@ namespace TopNews.Core.Services
     {
         private readonly UserManager<AppUser> _userManager;
         private readonly SignInManager<AppUser> _signInManager;
+        private readonly EmailServices _emailService;
+        private readonly IConfiguration _configuration;
         private readonly IMapper _mapper;
 
-        public UserService(UserManager<AppUser> userManager, SignInManager<AppUser> signInManager, IMapper mapper)
+        public UserService(UserManager<AppUser> userManager, SignInManager<AppUser> signInManager, IMapper mapper, IConfiguration configuration, EmailServices emailServices)
         {
             _mapper = mapper;
             _userManager = userManager;
             _signInManager = signInManager;
+            _configuration = configuration;
+            _emailService = emailServices;
         }
 
         public async Task<ServiceResponse> LoginUserAsync(LoginDTO model)
@@ -152,6 +157,7 @@ namespace TopNews.Core.Services
                 Message = "User successfully loaded",
                 Payload = mappedUser
             };
+            ////////////////
         }
 
         public async Task<ServiceResponse> UpdatePasswordAsync(UpdatePasswordDTO model)
@@ -178,6 +184,8 @@ namespace TopNews.Core.Services
                 };
             }
 
+
+
             List<IdentityError> errorList = result.Errors.ToList();
             string errors = "";
             foreach (var error in errorList)
@@ -190,6 +198,39 @@ namespace TopNews.Core.Services
                 Success = false,
                 Message = "Error",
                 Payload = errors
+            };
+        }
+
+        public async Task<ServiceResponse> ChangeMainInfoUserAsync(UpdateUserDTO newinfo)
+        {
+            AppUser user = await _userManager.FindByIdAsync(newinfo.Id);
+
+            if (user != null)
+            {
+                user.FirstName = newinfo.FirstName;
+                user.LastName = newinfo.LastName;
+                user.Email = newinfo.Email;
+                user.PhoneNumber = newinfo.PhoneNumber;
+
+                IdentityResult result = await _userManager.UpdateAsync(user);
+
+                return (result.Succeeded) ?
+                    new ServiceResponse
+                    {
+                        Success = true,
+                        Message = "The information has been changed"
+                    } :
+                    new ServiceResponse
+                    {
+                       Success = false,
+                        Message = "Error",
+                        Payload = result.Errors
+                    };
+            }
+            return new ServiceResponse 
+            {
+                Success = false,
+                Message = "Error"
             };
         }
 
@@ -219,6 +260,9 @@ namespace TopNews.Core.Services
             }
             
             var roles = await _userManager.AddToRoleAsync(user, model.Role);
+
+           await SendConfirmationEmailAsync(user);
+
             if (!roles.Succeeded) 
             {
                 return new ServiceResponse
@@ -242,6 +286,7 @@ namespace TopNews.Core.Services
             };
         }
 
+       
         public async Task<ServiceResponse> DeleteUserAsync(string Id)
         {
             AppUser userdelete = await _userManager.FindByIdAsync(Id);
@@ -274,5 +319,53 @@ namespace TopNews.Core.Services
             };
         }
 
+        public async Task SendConfirmationEmailAsync(AppUser user)
+        {
+            var token = await _userManager.GenerateEmailConfirmationTokenAsync(user);
+            var encodedToken = Encoding.UTF8.GetBytes(token);
+            var validEmailToken = WebEncoders.Base64UrlEncode(encodedToken);
+
+            //string url = $"{_configuration["HostSettings:URL"]}/Dashboard/confirmemail?userId={user.Id}&token={validEmailToken}";
+            //var url = $"{_configuration["HostSettings:URL"]}/Dashboard/confirmemail?userid={user.Id}&token={validEmailToken}";
+            //string emailBody = $"<h1>Conform your email please.</h1><a href='{url}'>Confirm now!</a>";
+
+            //await _emailServices.SendEmail(user.Email, "Email confirmation.", emailBody);
+
+            var url = $"{_configuration["HostSettings:URL"]}/Dashboard/confirmemail?userid={user.Id}&token={validEmailToken}";
+
+            string emailBody = $"<h1>Confirm your email please.</h1><a href='{url}'>Confirm now!</a>";
+            await _emailService.SendEmail(user.Email, "Email confirmation.", emailBody);
+        }
+
+        public async Task<ServiceResponse> ConfirmEmailAsync(string userId,string token)
+        {
+            var user = await _userManager.FindByIdAsync(userId);
+            if (user == null)
+            {
+                return new ServiceResponse
+                {
+                    Success = false,
+                    Message= "User not found",
+                };
+            }
+            var decodedToken =WebEncoders.Base64UrlDecode(token);
+            string normalToken = Encoding.UTF8.GetString(decodedToken);
+
+            var result = await _userManager.ConfirmEmailAsync(user, normalToken);
+            if (result.Succeeded)
+            {
+                return new ServiceResponse
+                {
+                    Success = true,
+                    Message = "Email successfully confirmed."
+                };
+            }
+
+            return new ServiceResponse
+            {
+                Success = true,
+                Message = "Email successfully confirmed."
+            };
+        }
     }
 }
