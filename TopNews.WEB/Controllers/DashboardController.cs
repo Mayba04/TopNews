@@ -160,7 +160,7 @@ namespace TopNews.WEB.Controllers
             var validationResult = await validator.ValidateAsync(model);
             if (validationResult.IsValid)
             {
-                var result = await _userService.Create(model);
+                var result = await _userService.CreateUserAsync(model);
                 if (result.Success)
                 {
                     return RedirectToAction(nameof(GetAll));
@@ -180,6 +180,18 @@ namespace TopNews.WEB.Controllers
             return View(res.Payload);
            
         }
+
+        public async Task<IActionResult> DeleteUser(string id)
+        {
+            var result = await _userService.DeleteUserAsync(id);
+            if (result.Success)
+            {
+                return RedirectToAction(nameof(GetAll));
+            }
+            ViewBag.CreateUserError = result.Payload;
+            return RedirectToAction(nameof(GetAll));
+        }
+    
 
         public async Task<IActionResult> ConfirmEmail(string userId, string token)
         {

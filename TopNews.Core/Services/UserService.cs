@@ -44,7 +44,7 @@ namespace TopNews.Core.Services
                 };
             }
 
-            SignInResult result = await _signInManager.PasswordSignInAsync(user, model.Password, model.RememberMe, lockoutOnFailure: true);
+            SignInResult result = await _signInManager.PasswordSignInAsync(user, model.Password, model.RememberMe, lockoutOnFailure: true);/// failed login user
             if (result.Succeeded)
             {
                 await _signInManager.SignInAsync(user, model.RememberMe);
@@ -93,31 +93,6 @@ namespace TopNews.Core.Services
 
         public async Task<ServiceResponse> GetAllAsync()
         {
-            //List<AppUser> users = await _userManager.Users.ToListAsync();
-            //List<UserDTO> mappedUsers = users.Select(u => _mapper.Map<AppUser, UserDTO>(u)).ToList();
-
-            //for (int j = 0; j < users.Count; j++)
-            //{
-            //    var userDto = _mapper.Map<AppUser, UserDTO>(users[j]);
-            //    var roles = await _userManager.GetRolesAsync(users[j]);
-            //    for (var i = 0; i < roles.Count; i++)
-            //    {
-            //        if (j == i)
-            //        {
-            //            userDto.Role = roles[i];
-            //        }
-            //    }
-            //    mappedUsers[j] = userDto;
-            //}
-            ////write code here!
-
-            //return new ServiceResponse
-            //{
-            //    Success = true,
-            //    Message = "All users loaded.",
-            //    Payload = mappedUsers
-            //};
-
             List<AppUser> users = await _userManager.Users.ToListAsync();
 
             List<UserDTO> mappedUsers = users.Select(u => _mapper.Map<AppUser, UserDTO>(u)).ToList();
@@ -234,10 +209,10 @@ namespace TopNews.Core.Services
             };
         }
 
-        public async Task<ServiceResponse> Create(CreateUserDTO model)
+        public async Task<ServiceResponse> CreateUserAsync(CreateUserDTO model)
         {
-            var users= await _userManager.FindByEmailAsync(model.Email);
-            if (users != null)
+            var user = await _userManager.FindByEmailAsync(model.Email);
+            if (user != null)
             {
                 return new ServiceResponse
                 {
@@ -246,9 +221,9 @@ namespace TopNews.Core.Services
                 };
             }
 
-            var user = _mapper.Map<CreateUserDTO, AppUser>(model);
-
-            var acount = await _userManager.CreateAsync(user);
+            var mappedUser = _mapper.Map<CreateUserDTO, AppUser>(model);
+           
+            var acount = await _userManager.CreateAsync(mappedUser, model.Password);
 
             if (!acount.Succeeded)
             {
@@ -259,9 +234,9 @@ namespace TopNews.Core.Services
                 };
             }
             
-            var roles = await _userManager.AddToRoleAsync(user, model.Role);
+            var roles = await _userManager.AddToRoleAsync(mappedUser, model.Role);
 
-           await SendConfirmationEmailAsync(user);
+           await SendConfirmationEmailAsync(mappedUser);
 
             if (!roles.Succeeded) 
             {
@@ -295,10 +270,10 @@ namespace TopNews.Core.Services
                 IdentityResult result = await _userManager.DeleteAsync(userdelete);
                 if (result.Succeeded)
                 {
-                    
                     return new ServiceResponse
                     {
                         Success = true,
+                        Message = "succesfull",
                     };
                 }
                 else
@@ -307,7 +282,7 @@ namespace TopNews.Core.Services
                     {
                         Success = false,
                         Message = "Error",
-                        Payload = result.Errors
+                        Payload = result.Errors.Select(e => e.Description)
                     };
                 }
             }
