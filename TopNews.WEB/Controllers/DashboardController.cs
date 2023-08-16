@@ -191,8 +191,8 @@ namespace TopNews.WEB.Controllers
             ViewBag.CreateUserError = result.Payload;
             return RedirectToAction(nameof(GetAll));
         }
-    
 
+        [AllowAnonymous]
         public async Task<IActionResult> ConfirmEmail(string userId, string token)
         {
             var result = await _userService.ConfirmEmailAsync(userId, token);
@@ -201,6 +201,27 @@ namespace TopNews.WEB.Controllers
                 return Redirect(nameof(SignIn));
             }
             return Redirect(nameof(SignIn));
+        }
+
+
+        [AllowAnonymous]
+        public async Task<IActionResult> ForgotPassword()
+        {
+            return View();
+        }
+
+        [AllowAnonymous]
+        [HttpPost]
+        public async Task<IActionResult> ForgotPassword(string email)
+        {
+            var result = await _userService.ForgotPasswordAsync(email);
+            if (result.Success)
+            {
+                ViewBag.AuthError = "Check your email.";
+                return View(nameof(SignIn));
+            }
+            ViewBag.AuthError = "Sonething went wrong.";
+            return View();
         }
     }
 }
