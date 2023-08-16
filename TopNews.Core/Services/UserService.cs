@@ -374,5 +374,40 @@ namespace TopNews.Core.Services
                 Message = "Email successfully confirmed."
             };
         }
+
+        public async Task<ServiceResponse> ResetPasswordAsync(ResetPasswordDTO model)
+        {
+            var user = await _userManager.FindByEmailAsync(model.Email);
+            if (user == null)
+            {
+                return new ServiceResponse
+                {
+                    Message = "User exists.",
+                    Success = false,
+                };
+            }
+
+            ///var mappedUser = _mapper.Map<ResetPasswordDTO, AppUser>(model);
+
+            var decodedToken = WebEncoders.Base64UrlDecode(model.Token);
+            string normalToken = Encoding.UTF8.GetString(decodedToken);
+
+            var acount = await _userManager.ResetPasswordAsync(user, normalToken, model.ConfirmPassword);
+
+            if (acount.Succeeded)
+            {
+                return new ServiceResponse
+                {
+                    Success = true,
+                    Message = "Success"
+                };
+            }
+
+            return new ServiceResponse
+            {
+                Success = false,
+                Message = "Password change error"
+            };
+        }
     }
 }

@@ -218,7 +218,30 @@ namespace TopNews.WEB.Controllers
             if (result.Success)
             {
                 ViewBag.AuthError = "Check your email.";
-                return View(nameof(SignIn));
+                return View(nameof(Login));
+            }
+            ViewBag.AuthError = "Sonething went wrong.";
+            return View();
+        }
+
+        [AllowAnonymous]
+        public async Task<IActionResult> ResetPassword(string email, string token)
+        {
+            ViewBag.Email = email;
+            ViewBag.Token = token;
+            return View();
+        }
+
+        [AllowAnonymous]
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> ResetPassword(ResetPasswordDTO user)
+        {
+            var result = await _userService.ResetPasswordAsync(user);
+            if (result.Success)
+            {
+                ViewBag.AuthError = "Check your email.";
+                return View(nameof(Login));
             }
             ViewBag.AuthError = "Sonething went wrong.";
             return View();

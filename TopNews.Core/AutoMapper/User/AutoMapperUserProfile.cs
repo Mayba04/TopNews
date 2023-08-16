@@ -17,6 +17,7 @@ namespace TopNews.Core.AutoMapper.User
             CreateMap<UpdateUserDTO, AppUser>().ReverseMap();
             CreateMap<CreateUserDTO, AppUser>().ForMember(dst => dst.UserName, act => act.MapFrom(src => src.Email));
             CreateMap<AppUser, CreateUserDTO>();
+            CreateMap<ResetPasswordDTO, AppUser>().ReverseMap();
         }
     }
 }
