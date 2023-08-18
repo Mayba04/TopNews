@@ -217,10 +217,10 @@ namespace TopNews.WEB.Controllers
             var result = await _userService.ForgotPasswordAsync(email);
             if (result.Success)
             {
-                ViewBag.AuthError = "Check your email.";
+                ViewBag.AuthError = result.Message;
                 return View(nameof(Login));
             }
-            ViewBag.AuthError = "Sonething went wrong.";
+            ViewBag.AuthError = result.Message;
             return View();
         }
 
@@ -240,10 +240,10 @@ namespace TopNews.WEB.Controllers
             var result = await _userService.ResetPasswordAsync(user);
             if (result.Success)
             {
-                ViewBag.AuthError = "Check your email.";
+                ViewBag.AuthError = result.Message;
                 return View(nameof(Login));
             }
-            ViewBag.AuthError = "Sonething went wrong.";
+            ViewBag.AuthError = result.Message;
             return View();
         }
     }

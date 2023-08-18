@@ -320,7 +320,7 @@ namespace TopNews.Core.Services
             {
                 return new ServiceResponse
                 {
-                    Message = "User exists.",
+                    Message = "The user does not exist with this email.",
                     Success = false,
                 };
             }
@@ -382,7 +382,7 @@ namespace TopNews.Core.Services
             {
                 return new ServiceResponse
                 {
-                    Message = "User exists.",
+                    Message = "The user does not exist with this email.",
                     Success = false,
                 };
             }
