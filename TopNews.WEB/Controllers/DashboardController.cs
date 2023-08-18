@@ -235,15 +235,21 @@ namespace TopNews.WEB.Controllers
         [AllowAnonymous]
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> ResetPassword(ResetPasswordDTO user)
+        public async Task<IActionResult> ResetPassword(ResetPasswordDTO model)
         {
-            var result = await _userService.ResetPasswordAsync(user);
-            if (result.Success)
+            var validator = new ResetPasswordValidation();
+            var validationresult = await validator.ValidateAsync(model);
+            if (validationresult.IsValid)
             {
+                var result = await _userService.ResetPasswordAsync(model);
+                if (result.Success)
+                {
+                    ViewBag.AuthError = result.Message;
+                    return View(nameof(Login));
+                }
                 ViewBag.AuthError = result.Message;
-                return View(nameof(Login));
             }
-            ViewBag.AuthError = result.Message;
+            ViewBag.AuthError = validationresult.Errors[0];
             return View();
         }
     }
