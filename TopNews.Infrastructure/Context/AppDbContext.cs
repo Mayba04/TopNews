@@ -12,8 +12,8 @@ using System.Data.Common;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using TopNews.Core.Entities;
 using TopNews.Core.Entities.User;
-using TopNews.Infrastructure.Entities;
 using TopNews.Infrastructure.Initializers;
 using static Org.BouncyCastle.Math.EC.ECCurve;
 

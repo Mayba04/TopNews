@@ -4,7 +4,8 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using TopNews.Infrastructure.Entities;
+using TopNews.Core.Entities;
+
 
 namespace TopNews.Infrastructure.Initializers
 {
