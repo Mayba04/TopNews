@@ -173,23 +173,22 @@ namespace TopNews.WEB.Controllers
             return View();
         }
 
-     
+
         public async Task<IActionResult> Delete(string id)
         {
             var res = await _userService.GetUserByIdAsync(id);
             return View(res.Payload);
-           
         }
 
-        public async Task<IActionResult> DeleteUser(string id)
+        public async Task<IActionResult> DeleteById(string id)
         {
             var result = await _userService.DeleteUserAsync(id);
             if (result.Success)
             {
-                return RedirectToAction(nameof(GetAll));
+                return View(nameof(Index));
             }
-            ViewBag.CreateUserError = result.Payload;
-            return RedirectToAction(nameof(GetAll));
+            ViewBag.AuthError = result.Errors;
+            return View(nameof(Delete));
         }
 
         [AllowAnonymous]
@@ -251,6 +250,25 @@ namespace TopNews.WEB.Controllers
             }
             ViewBag.AuthError = validationresult.Errors[0];
             return View();
+        }
+
+        public async Task<IActionResult> Edit(string id)
+        {
+            await LoadRoles();
+            var result = await _userService.GetUserByIdAsync(id);
+            if (result.Success)
+            {
+                return View(result.Payload);
+            }
+            return View();
+        }
+
+        private async Task LoadRoles()
+        {
+            var result = await _userService.GetAllRolesAsync();
+            ViewBag.RolesList = result;
+
+
         }
     }
 }

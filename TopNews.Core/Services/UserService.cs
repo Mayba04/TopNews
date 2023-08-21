@@ -22,14 +22,16 @@ namespace TopNews.Core.Services
         private readonly EmailServices _emailService;
         private readonly IConfiguration _configuration;
         private readonly IMapper _mapper;
+        private readonly RoleManager<IdentityRole> _roleManager;
 
-        public UserService(UserManager<AppUser> userManager, SignInManager<AppUser> signInManager, IMapper mapper, IConfiguration configuration, EmailServices emailServices)
+        public UserService(RoleManager<IdentityRole> roleManager, UserManager<AppUser> userManager, SignInManager<AppUser> signInManager, IMapper mapper, IConfiguration configuration, EmailServices emailServices)
         {
             _mapper = mapper;
             _userManager = userManager;
             _signInManager = signInManager;
             _configuration = configuration;
             _emailService = emailServices;
+            _roleManager = roleManager;
         }
 
         public async Task<ServiceResponse> LoginUserAsync(LoginDTO model)
@@ -117,13 +119,13 @@ namespace TopNews.Core.Services
             {
                 return new ServiceResponse
                 {
-                    Success = true,
-                    Message = "User or password incorrect."
+                    Success = false,
+                    Message = "User not found"
                 };
             }
             var roles = await _userManager.GetRolesAsync(user);
 
-            var mappedUser = _mapper.Map<AppUser, UpdateUserDTO>(user);
+            UpdateUserDTO mappedUser = _mapper.Map<AppUser, UpdateUserDTO>(user);
 
             mappedUser.Role = roles[0];
             return new ServiceResponse
@@ -132,7 +134,6 @@ namespace TopNews.Core.Services
                 Message = "User successfully loaded",
                 Payload = mappedUser
             };
-            ////////////////
         }
 
         public async Task<ServiceResponse> UpdatePasswordAsync(UpdatePasswordDTO model)
@@ -261,7 +262,7 @@ namespace TopNews.Core.Services
             };
         }
 
-       
+
         public async Task<ServiceResponse> DeleteUserAsync(string Id)
         {
             AppUser userdelete = await _userManager.FindByIdAsync(Id);
@@ -270,10 +271,10 @@ namespace TopNews.Core.Services
                 IdentityResult result = await _userManager.DeleteAsync(userdelete);
                 if (result.Succeeded)
                 {
+
                     return new ServiceResponse
                     {
                         Success = true,
-                        Message = "succesfull",
                     };
                 }
                 else
@@ -282,7 +283,7 @@ namespace TopNews.Core.Services
                     {
                         Success = false,
                         Message = "Error",
-                        Payload = result.Errors.Select(e => e.Description)
+                        Payload = result.Errors
                     };
                 }
             }
@@ -408,6 +409,12 @@ namespace TopNews.Core.Services
                 Success = false,
                 Message = "Password change error"
             };
+        }
+
+        public async Task<List<IdentityRole>> GetAllRolesAsync()
+        {
+            var roles = await _roleManager.Roles.ToListAsync();
+            return roles;
         }
     }
 }

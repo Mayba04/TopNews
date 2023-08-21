@@ -14,6 +14,6 @@ namespace TopNews.Core.Services
 
         public object Payload { get; set; }
 
-        public IEnumerable<object> Headers { get; set; }
+        public IEnumerable<object> Errors { get; set; }
     }
 }
