@@ -267,8 +267,26 @@ namespace TopNews.WEB.Controllers
         {
             var result = await _userService.GetAllRolesAsync();
             ViewBag.RolesList = result;
+        }
 
-
+        [ValidateAntiForgeryToken]
+        [HttpPost]
+        public async Task<IActionResult> EditUser(UpdateUserDTO model)
+        {
+            var validator = new UpdateUserValidation();
+            var validationResult = await validator.ValidateAsync(model);
+            if (validationResult.IsValid)
+            {
+                ServiceResponse result = await _userService.EditUserAsync(model);
+                if (result.Success)
+                {
+                    return View(nameof(Index));
+                }
+                return View(nameof(Index));
+            }
+            await LoadRoles();
+            ViewBag.AuthError = validationResult.Errors.FirstOrDefault();
+            return View(nameof(EditUser));
         }
     }
 }

@@ -416,5 +416,50 @@ namespace TopNews.Core.Services
             var roles = await _roleManager.Roles.ToListAsync();
             return roles;
         }
+
+        public async Task<ServiceResponse> EditUserAsync(UpdateUserDTO model)
+        {
+            var user = await _userManager.FindByIdAsync(model.Id);
+            if (user == null)
+            {
+                return new ServiceResponse
+                {
+                    Success = false,
+                    Message = "User not found"
+                }; 
+            }
+
+            if (user.Email != model.Email)
+            {
+                user.EmailConfirmed = false;
+                user.Email = model.Email;
+                user.UserName = model.Email;
+                await SendConfirmationEmailAsync(user);
+            }
+
+            user.FirstName = model.FirstName;
+            user.LastName = model.LastName;
+            user.PhoneNumber = model.PhoneNumber;
+
+            IList<string> roles = await _userManager.GetRolesAsync(user);
+            await _userManager.RemoveFromRolesAsync(user, roles);
+
+             var result = await _userManager.UpdateAsync(user);
+            if (result.Succeeded)
+            {
+                await _userManager.AddToRoleAsync(user, model.Role);
+
+                return new ServiceResponse
+                {
+                    Success = true,
+                    Message = "User successfully updated",
+                };
+            }
+            return new ServiceResponse
+            {
+                Success = false,
+                Message = "Something went wrong"
+            };
+        }
     }
 }
