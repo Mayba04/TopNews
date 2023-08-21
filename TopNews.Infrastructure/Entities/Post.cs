@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace TopNews.Infrastructure.Entities
 {
-    public  class Post
+    public  class Post : IEntity
     {
         public int Id { get; set; }
 

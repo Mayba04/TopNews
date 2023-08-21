@@ -10,6 +10,10 @@ string connStr = builder.Configuration.GetConnectionString("DefaulConnection");
 //Databse context
 builder.Services.AddDbCotext(connStr);
 
+
+//Add repositories
+builder.Services.AddRepositories();
+
 //Add core services
 builder.Services.AddCoreServices();
 

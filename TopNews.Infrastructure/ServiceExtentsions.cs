@@ -7,7 +7,9 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using TopNews.Core.Entities.User;
+using TopNews.Core.Interfaces;
 using TopNews.Infrastructure.Context;
+using TopNews.Infrastructure.Repository;
 
 namespace TopNews.Infrastructure
 {
@@ -37,6 +39,11 @@ namespace TopNews.Infrastructure
                 options.User.RequireUniqueEmail = true;
             }).AddEntityFrameworkStores<AppDbContext>().
             AddDefaultTokenProviders();
+        }
+
+        public static void AddRepositories(this IServiceCollection services)
+        {
+            services.AddScoped(typeof(IRepository<>), typeof(Repository<>));
         }
     }
 }
