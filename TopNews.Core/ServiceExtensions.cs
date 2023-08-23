@@ -16,6 +16,7 @@ namespace TopNews.Core
         {
             services.AddTransient<UserService>();
             services.AddTransient<EmailServices>();
+            services.AddTransient<CategoryService>();
         }
 
         public static void AddMapping(this IServiceCollection services) 

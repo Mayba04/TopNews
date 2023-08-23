@@ -16,9 +16,11 @@ namespace TopNews.WEB.Controllers
     {
 
         private readonly UserService _userService;
-        public DashboardController(UserService userService)
+        private readonly CategoryService _categoryService;
+        public DashboardController(UserService userService, CategoryService categoryService)
         {
             _userService = userService;
+            _categoryService = categoryService;
         }
 
         public IActionResult Index()
@@ -287,6 +289,12 @@ namespace TopNews.WEB.Controllers
             await LoadRoles();
             ViewBag.AuthError = validationResult.Errors.FirstOrDefault();
             return View(nameof(EditUser));
+        }
+
+        public async Task<IActionResult> GetAllCategory()
+        {
+            var result = await _categoryService.GetAll();
+            return View(result);
         }
     }
 }

@@ -44,9 +44,9 @@ namespace TopNews.Infrastructure.Repository
                 });
         }
 
-        public Task<IEnumerable<TEntity>> GetAll()
+        public async Task<IEnumerable<TEntity>> GetAll()
         {
-            throw new NotImplementedException();
+            return await dbSet.ToListAsync();
         }
 
         public async Task<TEntity?> GetByID(object id)
