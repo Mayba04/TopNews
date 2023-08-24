@@ -53,11 +53,33 @@ namespace TopNews.WEB.Controllers
                     return View();
                 }
                 await _categoryService.Create(model);
-                return View(nameof(GetAllCategory));
+                return RedirectToAction(nameof(GetAllCategory));
             }
             ViewBag.AuthError = validationResult.Errors[0];
             return View();
         }
+
+        public async Task<IActionResult> DeleteCategory(int id)
+        {
+
+            CategoryDTO? result = await _categoryService.Get(id);
+            if (result != null)
+            {
+                return View(result);
+            }
+            ViewBag.AuthError = "An error occurred";
+            return RedirectToAction(nameof(GetAllCategory));
+        }
+
+        public async Task<IActionResult> Delete(int Id)
+        {
+            await _categoryService.Delete(Id);
+            return RedirectToAction(nameof(GetAllCategory));
+        }
+
+        
+
+
 
 
     }

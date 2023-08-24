@@ -33,7 +33,7 @@ namespace TopNews.Core.Services
             var model = await Get(id);
             if (model == null) return;
 
-            await _categoryRepo.Delete(model);
+            await _categoryRepo.Delete(model.Id);
             await _categoryRepo.Save();
         }
 

@@ -57,7 +57,7 @@
                                          @if (@User.IsInRole("Administrator"))
                                          {
                                              <td><a asp-controller="Category" asp-action="Edit" asp-route-id="@item.Id" class="btn btn-block btn-warning btn-sm">Edit</a></td>
-                                                     <td><a asp-controller="Category" asp-action="Delete" asp-route-id="@item.Id" class="btn btn-block btn-danger btn-sm">Delete</a></td>
+                                                <td><a asp-controller="Category" asp-action="DeleteCategory" asp-route-id="@item.Id" class="btn btn-block btn-danger btn-sm">Delete</a></td>
                                          }
                                         </tr>
                                     }
