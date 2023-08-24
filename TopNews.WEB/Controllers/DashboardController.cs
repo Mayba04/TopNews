@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.Rendering;
 using TopNews.Core.DTOs.Login;
 using TopNews.Core.DTOs.User;
 using TopNews.Core.Services;
@@ -256,19 +257,22 @@ namespace TopNews.WEB.Controllers
 
         public async Task<IActionResult> Edit(string id)
         {
-            await LoadRoles();
             var result = await _userService.GetUserByIdAsync(id);
             if (result.Success)
             {
+                await LoadRoles();
                 return View(result.Payload);
             }
-            return View();
+
+            return View(nameof(Index));
         }
 
         private async Task LoadRoles()
         {
-            var result = await _userService.GetAllRolesAsync();
-            ViewBag.RolesList = result;
+            List<IdentityRole> result = await _userService.GetAllRolesAsync();
+            @ViewBag.RoleList = new SelectList((System.Collections.IEnumerable)result,
+                nameof(IdentityRole.Name), nameof(IdentityRole.Name)
+              );
         }
 
         [ValidateAntiForgeryToken]
@@ -287,14 +291,10 @@ namespace TopNews.WEB.Controllers
                 return View(nameof(Index));
             }
             await LoadRoles();
-            ViewBag.AuthError = validationResult.Errors.FirstOrDefault();
-            return View(nameof(EditUser));
+            ViewBag.AuthError = validationResult.Errors[0];
+            return View(nameof(Edit));
         }
 
-        public async Task<IActionResult> GetAllCategory()
-        {
-            var result = await _categoryService.GetAll();
-            return View(result);
-        }
+        
     }
 }
