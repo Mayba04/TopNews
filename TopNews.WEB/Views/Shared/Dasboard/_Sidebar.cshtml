@@ -83,6 +83,16 @@
                                 <p>All Category</p>
                             </a>
                         </li>
+                        <!-- Show only administrator-->
+                        @if (User.IsInRole("Administrator"))
+                        {
+                            <li class="nav-item">
+                                <a asp-controller="Category" asp-action="CreateCategory" class="nav-link">
+                                    <i class="far fa-circle nav-icon"></i>
+                                    <p>Add Category</p>
+                                </a>
+                            </li>
+                        }
                     </ul>
                 </li>
                 
