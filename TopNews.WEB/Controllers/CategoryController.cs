@@ -107,10 +107,7 @@ namespace TopNews.WEB.Controllers
                 return RedirectToAction(nameof(GetAllCategory));
             }
             ViewBag.AuthError = validationResult.Errors[0];
-            //return View(model.Id);
-            //await _categoryService.Update(model);
-            //return RedirectToAction(nameof(GetAllCategory));
-            return RedirectToAction(nameof(UpdateCategory),model.Id);
+            return View();
 
         }
     }
