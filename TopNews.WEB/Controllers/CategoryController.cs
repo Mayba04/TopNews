@@ -91,25 +91,26 @@ namespace TopNews.WEB.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> UpdateCategory(CategoryDTO model)
         {
-            //var validator = new CreateCategoryValidation();
-            //var validationResult = await validator.ValidateAsync(model);
-            //if (validationResult.IsValid)
-            //{
-            //    var categoriesTask = _categoryService.GetAll();
-            //    List<CategoryDTO> categories = await categoriesTask;
-            //    bool containsCategory = categories.Any(cat => cat.Name == model.Name && cat.Id != model.Id );
-            //    if (containsCategory)
-            //    {
-            //        ViewBag.AuthError = "Such a category already exists";
-            //        return View();
-            //    }
-            //    await _categoryService.Update(model);
-            //    return RedirectToAction(nameof(GetAllCategory));
-            //}
-            //ViewBag.AuthError = validationResult.Errors[0];
-            //return View();
-            await _categoryService.Update(model);
-            return RedirectToAction(nameof(GetAllCategory));
+            var validator = new CreateCategoryValidation();
+            var validationResult = await validator.ValidateAsync(model);
+            if (validationResult.IsValid)
+            {
+                var categoriesTask = _categoryService.GetAll();
+                List<CategoryDTO> categories = await categoriesTask;
+                bool containsCategory = categories.Any(cat => cat.Name == model.Name && cat.Id != model.Id);
+                if (containsCategory)
+                {
+                    ViewBag.AuthError = "Such a category already exists";
+                    return View();
+                }
+                await _categoryService.Update(model);
+                return RedirectToAction(nameof(GetAllCategory));
+            }
+            ViewBag.AuthError = validationResult.Errors[0];
+            //return View(model.Id);
+            //await _categoryService.Update(model);
+            //return RedirectToAction(nameof(GetAllCategory));
+            return RedirectToAction(nameof(UpdateCategory),model.Id);
 
         }
     }
