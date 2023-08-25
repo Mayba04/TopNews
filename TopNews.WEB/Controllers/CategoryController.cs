@@ -101,7 +101,8 @@ namespace TopNews.WEB.Controllers
                 if (containsCategory)
                 {
                     ViewBag.AuthError = "Such a category already exists";
-                    return View();
+                    var modelTwo = await _categoryService.Get(model.Id);
+                    return View(modelTwo);
                 }
                 await _categoryService.Update(model);
                 return RedirectToAction(nameof(GetAllCategory));
