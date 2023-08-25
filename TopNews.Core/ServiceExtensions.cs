@@ -5,6 +5,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using TopNews.Core.AutoMapper.Categories;
+using TopNews.Core.AutoMapper.Posts;
 using TopNews.Core.AutoMapper.User;
 using TopNews.Core.Services;
 
@@ -17,12 +18,14 @@ namespace TopNews.Core
             services.AddTransient<UserService>();
             services.AddTransient<EmailServices>();
             services.AddTransient<CategoryService>();
+            services.AddTransient<PostService>();
         }
 
         public static void AddMapping(this IServiceCollection services) 
         {
             services.AddAutoMapper(typeof(AutoMapperUserProfile));
             services.AddAutoMapper(typeof(AutoMapperCategoryProfile));
+            services.AddAutoMapper(typeof(AutoMapperPostProfile));
         }
     }
 }
