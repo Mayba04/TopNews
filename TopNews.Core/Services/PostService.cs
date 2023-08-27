@@ -11,7 +11,7 @@ using TopNews.Core.Interfaces;
 
 namespace TopNews.Core.Services
 {
-    internal class PostService : IPostService
+    public class PostService : IPostService
     {
         private readonly IMapper _mapper;
         private readonly IRepository<Post> _postRepo;

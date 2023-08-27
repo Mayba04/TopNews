@@ -97,6 +97,29 @@
                 </li>
                 
             </ul>
+
+            <ul class="nav nav-pills nav-sidebar flex-column" data-widget="treeview" role="menu" data-accordion="false">
+                <li class="nav-item">
+                    <a href="#" class="nav-link active">
+                        <i class="fas fa-newspaper"></i>
+                        <p>
+                            Post
+                            <i class="fas fa-angle-left right"></i>
+                        </p>
+                    </a>
+                    <ul class="nav nav-treeview">
+                        <li class="nav-item">
+                            <a asp-controller="Post" asp-action="GetAllPost" class="nav-link">
+                                <i class="far fa-circle nav-icon"></i>
+                                <p>All Posts</p>
+                            </a>
+                        </li>
+                        <!-- Show only administrator-->
+                        
+                    </ul>
+                </li>
+
+            </ul>
         </nav>
     </div>
     <!-- /.sidebar -->
