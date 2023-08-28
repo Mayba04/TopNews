@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using Microsoft.Extensions.Hosting;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -7,6 +8,7 @@ using System.Threading.Tasks;
 using TopNews.Core.DTOs.Category;
 using TopNews.Core.DTOs.Post;
 using TopNews.Core.Entities;
+using TopNews.Core.Entities.Specifications;
 using TopNews.Core.Interfaces;
 
 namespace TopNews.Core.Services
@@ -48,6 +50,12 @@ namespace TopNews.Core.Services
         public async Task<List<PostDTO>> GetAll()
         {
             var result = await _postRepo.GetAll();
+            return _mapper.Map<List<PostDTO>>(result);
+        }
+
+        public async Task<List<PostDTO>> GetByCategory(int id)
+        {
+            var result = await _postRepo.GetListBySpec(new PostSpecification.ByCategory(id));
             return _mapper.Map<List<PostDTO>>(result);
         }
 

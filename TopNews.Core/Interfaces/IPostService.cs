@@ -11,7 +11,7 @@ namespace TopNews.Core.Interfaces
     public interface IPostService
     {
         Task<List<PostDTO>> GetAll();
-
+        Task<List<PostDTO>> GetByCategory(int id);
         Task<PostDTO?> Get(int id);
         Task Create(PostDTO model);
         Task Update(PostDTO model);

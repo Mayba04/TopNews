@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using TopNews.Core.DTOs.Category;
+using TopNews.Core.Interfaces;
 using TopNews.Core.Services;
 
 
@@ -7,13 +8,13 @@ namespace TopNews.WEB.Controllers
 {
     public class PostController : Controller
     {
-        private readonly UserService _userService;
-        private readonly PostService _postService;
+        private readonly ICategoryService _categoryService;
+        private readonly IPostService _postService;
 
 
-        public PostController(UserService userService, PostService postService)
+        public PostController(ICategoryService userService, IPostService postService)
         {
-            _userService = userService;
+            _categoryService = userService;
             _postService = postService;
         }
 

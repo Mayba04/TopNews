@@ -6,6 +6,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using TopNews.Core.DTOs.Login;
 using TopNews.Core.DTOs.User;
+using TopNews.Core.Interfaces;
 using TopNews.Core.Services;
 using TopNews.Core.Validation.User;
 using TopNews.WEB.Models.ViewModels;
@@ -17,8 +18,8 @@ namespace TopNews.WEB.Controllers
     {
 
         private readonly UserService _userService;
-        private readonly CategoryService _categoryService;
-        public DashboardController(UserService userService, CategoryService categoryService)
+        private readonly ICategoryService _categoryService;
+        public DashboardController(UserService userService, ICategoryService categoryService)
         {
             _userService = userService;
             _categoryService = categoryService;

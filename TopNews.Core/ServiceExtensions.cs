@@ -7,6 +7,7 @@ using System.Threading.Tasks;
 using TopNews.Core.AutoMapper.Categories;
 using TopNews.Core.AutoMapper.Posts;
 using TopNews.Core.AutoMapper.User;
+using TopNews.Core.Interfaces;
 using TopNews.Core.Services;
 
 namespace TopNews.Core
@@ -17,8 +18,8 @@ namespace TopNews.Core
         {
             services.AddTransient<UserService>();
             services.AddTransient<EmailServices>();
-            services.AddTransient<CategoryService>();
-            services.AddTransient<PostService>();
+            services.AddScoped<ICategoryService, CategoryService>();
+            services.AddScoped<IPostService, PostService>();
         }
 
         public static void AddMapping(this IServiceCollection services) 
