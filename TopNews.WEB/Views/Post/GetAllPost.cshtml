@@ -1,5 +1,10 @@
 ﻿@using TopNews.Core.DTOs.Post;
-@model List<PostDTO>
+
+@using X.PagedList.Mvc.Core;
+@using X.PagedList.Web.Common;
+@using X.PagedList;
+@model IPagedList<PostDTO>
+
 
 <link rel="stylesheet" href="~/dashboard/plugins/datatables-bs4/css/dataTables.bootstrap4.min.css">
 <link rel="stylesheet" href="~/dashboard/plugins/datatables-responsive/css/responsive.bootstrap4.min.css">
@@ -9,8 +14,7 @@
     ViewData["Title"] = "Categories";
     Layout = "~/Views/Shared/_DashboardLayout.cshtml";
 }
-
-<div class="content-wrapper">
+@*<div class="content-wrapper">
     <section class="content-header">
         <div class="container-fluid">
             <div class="row mb-2">
@@ -68,7 +72,20 @@
                                         </tr>
                                     }
                                 </tbody>
-
+                                <div class="dataTables_paginate paging_simple_numbers" id="example2_paginate">
+                                    @Html.PagedListPager(Model, page => Url.Action("index", new { page = page }), new PagedListRenderOptions()
+                                    {
+                                    ActiveLiElementClass = "active",
+                                    PageClasses = new[]{ "page-link"},
+                                    LiElementClasses=new[] { "page-item" },
+                                    UlElementClasses = new[] { "pagination","justify-content-center", "mt-3" },
+                                    LinkToNextPageFormat = "Next",
+                                    LinkToPreviousPageFormat = "Prev",
+                                    MaximumPageNumbersToDisplay = 3,
+                                    DisplayLinkToPreviousPage = PagedListDisplayMode.Never,
+                                    DisplayLinkToNextPage = PagedListDisplayMode.Never
+                                    })
+                                </div>
                             </table>
                         </div>
                         <!-- /.card-body -->
@@ -80,5 +97,70 @@
             <!-- /.row -->
         </div>
         <!-- /.container-fluid -->
+    </section>
+</div>*@
+<div class="content-wrapper">
+    <section class="content-header">
+        <div class="container-fluid">
+            <div class="row mb-2">
+                <div class="col-sm-6">
+                    <h1>All post</h1>
+                </div>
+                <div class="col-sm-6">
+                    <ol class="breadcrumb float-sm-right">
+                        <li class="breadcrumb-item"><a href="#">Home</a></li>
+                        <li class="breadcrumb-item active">Post</li>
+                    </ol>
+                </div>
+            </div>
+        </div>
+    </section>
+    <section class="content">
+        <div class="container-fluid">
+
+            <div class="row">
+                <div class="col-12">
+                    @foreach (var item in Model)
+                    {
+                        <div class="card mb-4">
+                            <div class="row no-gutters">
+                                <div class="col-md-4">
+                                    <img src="@item.Image" class="card-img" alt="@item.Title">
+                                </div>
+                                <div class="col-md-8">
+                                    <div class="card-body">
+                                        <h5 class="card-title">@item.Title</h5>
+                                        <p class="card-text">@item.Description</p>
+                                        <p class="card-text">@item.Text</p>
+                                        <p class="card-text"><small class="text-muted">@item.DatePublication.ToString("yyyy-MM-dd")</small></p>
+                                        @if (User.IsInRole("Administrator"))
+                                        {
+                                            <td><a asp-controller="Category" asp-action="UpdateCategory" asp-route-id="@item.Id" class="btn btn-block btn-warning btn-sm">Edit</a></td>
+                                            <td><a asp-controller="Post" asp-action="DeletePost" asp-route-id="@item.Id" class="btn btn-block btn-danger btn-sm">Delete</a></td>
+                                        }
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    }
+                </div>
+            </div>
+            <div class="row justify-content-center mt-3">
+                <div class="dataTables_paginate paging_simple_numbers" id="example2_paginate">
+                    @Html.PagedListPager(Model, page => Url.Action("index", new { page = page }), new PagedListRenderOptions()
+                    {
+                    ActiveLiElementClass = "active",
+                    PageClasses = new[]{ "page-link"},
+                    LiElementClasses=new[] { "page-item" },
+                    UlElementClasses = new[] { "pagination","justify-content-center", "mt-3" },
+                    LinkToNextPageFormat = "Next",
+                    LinkToPreviousPageFormat = "Prev",
+                    MaximumPageNumbersToDisplay = 3,
+                    DisplayLinkToPreviousPage = PagedListDisplayMode.Never,
+                    DisplayLinkToNextPage = PagedListDisplayMode.Never
+                    })
+                </div>
+            </div>
+        </div>
     </section>
 </div>

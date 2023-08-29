@@ -6,6 +6,7 @@ using TopNews.Core.DTOs.Post;
 using TopNews.Core.Interfaces;
 using TopNews.Core.Services;
 using TopNews.Core.Validation.Post;
+using X.PagedList;
 
 namespace TopNews.WEB.Controllers
 {
@@ -30,7 +31,11 @@ namespace TopNews.WEB.Controllers
         {
             var categoriesTask = await _postService.GetAll();
 
-            return View(categoriesTask);
+           // return View(categoriesTask);
+            int pageSize = 20;
+            int pageNumber = 1;
+            categoriesTask.Reverse();
+            return View("GetAllPost", categoriesTask.ToPagedList(pageNumber, pageSize));
         }
 
         public async Task<IActionResult> AddPost()
@@ -55,17 +60,16 @@ namespace TopNews.WEB.Controllers
             var validationResult = await validator.ValidateAsync(model);
             if (validationResult.IsValid)
             {
-                var categoryModel = await _categoryService.GetByName(model.CategoryName);
-                if (categoryModel != null)
-                {
-                    model.CategoryId = categoryModel.Id;
-                    model.CategoryName = categoryModel.Name;
+                //var categoryModel = await _categoryService.GetByName(model.CategoryName);
+                //if (categoryModel != null)
+                //{
+                //    model.CategoryId = categoryModel.Id;
                     await _postService.Create(model);
                     return RedirectToAction(nameof(GetAllPost));
                 }
-                ViewBag.AuthError = "Such a category does not exist";
-                return View();
-            }
+            //    ViewBag.AuthError = "Such a category does not exist";
+            //    return View();
+            //}
             ViewBag.AuthError = validationResult.Errors[0];
             return View();
         }
