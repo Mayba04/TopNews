@@ -92,7 +92,7 @@
                                         <span class="text-danger">@ViewBag.AuthError</span>
                                     }
                                     <h5 class="mb-4">Do you really wants to delete category @ViewBag.CategoryName?</h5>
-                                    <a asp-action="DeleteById" asp-controller="Category" asp-route-id="@ViewBag.CategoryId" style="width: 25%;" class="btn btn-block btn-danger btn-sm">Delete</a>
+                                    <a asp-action="Delete" asp-controller="Category" asp-route-id="@ViewBag.CategoryId" style="width: 25%;" class="btn btn-block btn-danger btn-sm">Delete</a>
                                 </div>
                             </div>
                             <!-- /.card-body -->

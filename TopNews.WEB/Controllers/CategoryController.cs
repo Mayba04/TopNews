@@ -72,7 +72,7 @@ namespace TopNews.WEB.Controllers
             if (categoryDto == null)
             {
                 ViewBag.AuthError = "Category not found.";
-                return View();
+                return RedirectToAction(nameof(GetAllCategory));
             }
 
             List<PostDTO> posts = await _postService.GetByCategory(id);
