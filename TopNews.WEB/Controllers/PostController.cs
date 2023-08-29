@@ -55,11 +55,30 @@ namespace TopNews.WEB.Controllers
             var validationResult = await validator.ValidateAsync(model);
             if (validationResult.IsValid)
             {
-               await _postService.Create(model);
-               return RedirectToAction(nameof(GetAllPost));
+                await _postService.Create(model);
+                return RedirectToAction(nameof(GetAllPost));
             }
             ViewBag.AuthError = validationResult.Errors[0];
             return View();
+        }
+
+
+        public async Task<IActionResult> DeletePost(int id)
+        {
+            var model = await _postService.Get(id);
+
+            if (model == null)
+            {
+                ViewBag.AuthError = " Post not found.";
+                return View();
+            }
+            return View(model);
+        }
+
+        public async Task<IActionResult> Delete(int Id)
+        {
+            await _postService.Delete(Id);
+            return RedirectToAction(nameof(GetAllPost));
         }
 
     }
