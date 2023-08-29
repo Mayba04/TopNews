@@ -14,6 +14,7 @@ namespace TopNews.Core.Interfaces
        
         Task<CategoryDTO?> Get(int id);
         Task<ServiceResponse> GetByName(CategoryDTO model);
+        Task<CategoryDTO> GetByName(string NameCategory);
         Task Create(CategoryDTO model);
         Task Update(CategoryDTO model);
         Task Delete(int id);

@@ -72,6 +72,17 @@ namespace TopNews.Core.Services
             };
         }
 
+        public async Task<CategoryDTO> GetByName(string NameCategory)
+        {
+            var result = await _categoryRepo.GetItemBySpec(new CategorySpecification.GetByName(NameCategory));
+            if (result != null)
+            {
+                CategoryDTO categoryDTO = _mapper.Map<CategoryDTO>(result);
+                return categoryDTO;
+            }
+            return null;
+        }
+
         public async Task Update(CategoryDTO model)
         {
            await _categoryRepo.Update(_mapper.Map<Category>(model));

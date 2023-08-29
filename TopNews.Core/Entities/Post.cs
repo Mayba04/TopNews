@@ -7,7 +7,7 @@ using TopNews.Core.Interfaces;
 
 namespace TopNews.Core.Entities
 {
-    public  class Post : IEntity
+    public class Post : IEntity
     {
         public int Id { get; set; }
 
@@ -21,8 +21,8 @@ namespace TopNews.Core.Entities
 
         public string? Image { get; set; } = "Default.png";
 
-        public int CategoryId { get; set; }
+        public int CategoryId { get; set; } = int.MaxValue;
 
-        public Category Category { get; set; }
+        public Category? Category { get; set; };
     }
 }

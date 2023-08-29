@@ -55,8 +55,16 @@ namespace TopNews.WEB.Controllers
             var validationResult = await validator.ValidateAsync(model);
             if (validationResult.IsValid)
             {
-                await _postService.Create(model);
-                return RedirectToAction(nameof(GetAllPost));
+                var categoryModel = await _categoryService.GetByName(model.CategoryName);
+                if (categoryModel != null)
+                {
+                    model.CategoryId = categoryModel.Id;
+                    model.CategoryName = categoryModel.Name;
+                    await _postService.Create(model);
+                    return RedirectToAction(nameof(GetAllPost));
+                }
+                ViewBag.AuthError = "Such a category does not exist";
+                return View();
             }
             ViewBag.AuthError = validationResult.Errors[0];
             return View();
