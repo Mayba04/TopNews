@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Identity;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using TopNews.Core.DTOs.Category;
@@ -38,6 +39,7 @@ namespace TopNews.WEB.Controllers
             return View("GetAllPost", categoriesTask.ToPagedList(pageNumber, pageSize));
         }
 
+        [Authorize(Roles = "Administrator")]
         public async Task<IActionResult> AddPost()
         {
             await LoadCategory();
@@ -46,10 +48,11 @@ namespace TopNews.WEB.Controllers
 
         private async Task LoadCategory()
         {
-            List<CategoryDTO> result = await _categoryService.GetAll();
-            @ViewBag.Category = new SelectList((System.Collections.IEnumerable)result,
-                nameof(IdentityRole.Name), nameof(IdentityRole.Name)
-              );
+            ViewBag.CategoryList = new SelectList(
+               await _categoryService.GetAll(),
+               nameof(CategoryDTO.Id),
+               nameof(CategoryDTO.Name)
+               );
         }
 
         [HttpPost]
@@ -60,16 +63,20 @@ namespace TopNews.WEB.Controllers
             var validationResult = await validator.ValidateAsync(model);
             if (validationResult.IsValid)
             {
-                //var categoryModel = await _categoryService.GetByName(model.CategoryName);
-                //if (categoryModel != null)
-                //{
-                //    model.CategoryId = categoryModel.Id;
+                var files = HttpContext.Request.Form.Files;
+                model.File = files;
+                var categoryModel = await _categoryService.Get(model.CategoryId);
+                if (categoryModel != null)
+                {
+                    model.CategoryId = categoryModel.Id;
+                    model.CategoryName = categoryModel.Name;
                     await _postService.Create(model);
+
                     return RedirectToAction(nameof(GetAllPost));
                 }
-            //    ViewBag.AuthError = "Such a category does not exist";
-            //    return View();
-            //}
+               ViewBag.AuthError = "Such a category does not exist";
+                return View();
+            }
             ViewBag.AuthError = validationResult.Errors[0];
             return View();
         }

@@ -17,11 +17,10 @@ namespace TopNews.Core.Entities
 
         public string Text { get; set; } = string.Empty;
 
-        public DateTime DatePublication { get; set; }
-
+        public DateTime DatePublication { get; set; } 
         public string? Image { get; set; } = "Default.png";
 
-        public int CategoryId { get; set; } = int.MaxValue;
+        public int CategoryId { get; set; }
 
         public Category? Category { get; set; }
     }

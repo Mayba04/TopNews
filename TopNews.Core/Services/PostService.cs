@@ -1,4 +1,6 @@
 ﻿using AutoMapper;
+using Microsoft.AspNetCore.Hosting;
+using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Hosting;
 using System;
 using System.Collections.Generic;
@@ -17,15 +19,38 @@ namespace TopNews.Core.Services
     {
         private readonly IMapper _mapper;
         private readonly IRepository<Post> _postRepo;
+        private readonly IWebHostEnvironment _webHostEnvironment;
+        private readonly IConfiguration _configuration;
 
-        public PostService(IMapper mapper, IRepository<Post> categoryRepo)
+        public PostService(IMapper mapper, IRepository<Post> categoryRepo, IWebHostEnvironment webHostEnvironment, IConfiguration configuration)
         {
             _postRepo = categoryRepo;
             _mapper = mapper;
+            _webHostEnvironment = webHostEnvironment;
+            _configuration = configuration;
         }
 
         public async Task Create(PostDTO model)
         {
+            if (model.File.Count > 0) 
+            {
+                string wevRootPath = _webHostEnvironment.WebRootPath;
+                string uploadt = wevRootPath + _configuration.GetValue<string>("ImageSettings:ImagePath");
+                var files = model.File;
+                var fileName = Guid.NewGuid().ToString();
+                string extansions = Path.GetExtension(files[0].FileName);
+                using (var fileStream = new FileStream(Path.Combine(uploadt,fileName + extansions),FileMode.Create))
+                {
+                    files[0].CopyTo(fileStream);
+                }
+                model.Image = fileName + extansions;
+            }
+            else 
+            { 
+                model.Image = "Default.png"; 
+            }
+            DateTime currentDate = DateTime.Now;
+            string formatedDate = currentDate.ToString("d");
             await _postRepo.Insert(_mapper.Map<Post>(model));
             await _postRepo.Save();
         }

@@ -19,4 +19,8 @@
     <ProjectReference Include="..\TopNews.Infrastructure\TopNews.Infrastructure.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="wwwroot\images\posts\" />
+  </ItemGroup>
+
 </Project>
