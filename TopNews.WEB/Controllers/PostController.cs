@@ -65,17 +65,8 @@ namespace TopNews.WEB.Controllers
             {
                 var files = HttpContext.Request.Form.Files;
                 model.File = files;
-                var categoryModel = await _categoryService.Get(model.CategoryId);
-                if (categoryModel != null)
-                {
-                    model.CategoryId = categoryModel.Id;
-                    model.CategoryName = categoryModel.Name;
-                    await _postService.Create(model);
-
-                    return RedirectToAction(nameof(GetAllPost));
-                }
-               ViewBag.AuthError = "Such a category does not exist";
-                return View();
+                await _postService.Create(model);
+                return RedirectToAction(nameof(GetAllPost));
             }
             ViewBag.AuthError = validationResult.Errors[0];
             return View();
