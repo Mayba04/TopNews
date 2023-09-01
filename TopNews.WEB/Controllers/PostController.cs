@@ -30,9 +30,7 @@ namespace TopNews.WEB.Controllers
 
         public async Task<IActionResult> GetAllPost()
         {
-            var categoriesTask = await _postService.GetAll();
-
-           // return View(categoriesTask);
+            var categoriesTask = await _postService.GetAll();;
             int pageSize = 20;
             int pageNumber = 1;
             categoriesTask.Reverse();
@@ -72,7 +70,7 @@ namespace TopNews.WEB.Controllers
             return View();
         }
 
-
+        [Authorize(Roles = "Administrator")]
         public async Task<IActionResult> DeletePost(int id)
         {
             var model = await _postService.Get(id);
@@ -85,10 +83,59 @@ namespace TopNews.WEB.Controllers
             return View(model);
         }
 
+        [Authorize(Roles = "Administrator")]
         public async Task<IActionResult> Delete(int Id)
         {
             await _postService.Delete(Id);
             return RedirectToAction(nameof(GetAllPost));
+        }
+
+        [Authorize(Roles = "Administrator")]
+        public async Task<IActionResult> Edit(int id)
+        {
+            var posts = await _postService.Get(id);
+
+            if (posts == null) return NotFound();
+
+            await LoadCategory();
+            return View(posts);
+        }
+
+        [Authorize(Roles = "Administrator")]
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> Edit(PostDTO model)
+        {
+            var validator = new CreatePostValidation();
+            var validationResult = await validator.ValidateAsync(model);
+            if (validationResult.IsValid)
+            {
+                var files = HttpContext.Request.Form.Files;
+                model.File = files;
+                await _postService.Update(model);
+                return RedirectToAction(nameof(GetAllPost));
+            }
+            ViewBag.CreatePostError = validationResult.Errors[0];
+            return View(model);
+        }
+
+        [Authorize(Roles = "Administrator")]
+        public async Task<IActionResult> PostsByCategory(int id)
+        {
+            List<PostDTO> posts = await _postService.GetByCategory(id);
+            int pageSize = 20;
+            int pageNumber = 1;
+            return View("GetAllPost", posts.ToPagedList(pageNumber, pageSize));
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> Search([FromForm] string searchString)
+        {
+            List<PostDTO> posts = await _postService.Search(searchString);
+            int pageSize = 20;
+            int pageNumber = 1;
+            return View("GetAllPost", posts.ToPagedList(pageNumber, pageSize));
         }
 
     }

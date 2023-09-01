@@ -19,17 +19,15 @@ namespace TopNews.Core.Services
     {
         private readonly IMapper _mapper;
         private readonly IRepository<Post> _postRepo;
-        ICategoryService _categoryService;
         private readonly IWebHostEnvironment _webHostEnvironment;
         private readonly IConfiguration _configuration;
 
-        public PostService(IMapper mapper, IRepository<Post> postRepo, ICategoryService categryRepo, IWebHostEnvironment webHostEnvironment, IConfiguration configuration)
+        public PostService(IMapper mapper, IRepository<Post> postRepo, IWebHostEnvironment webHostEnvironment, IConfiguration configuration)
         {
             _postRepo = postRepo;
             _mapper = mapper;
             _webHostEnvironment = webHostEnvironment;
             _configuration = configuration;
-            _categoryService = categryRepo;
         }
 
         public async Task Create(PostDTO model)
@@ -64,6 +62,16 @@ namespace TopNews.Core.Services
             var model = await Get(id);
             if (model == null) return;
 
+            string webPathRoot = _webHostEnvironment.WebRootPath;
+            string upload = webPathRoot + _configuration.GetValue<string>("ImageSettings:ImagePath");
+
+            string existingFilePath = Path.Combine(upload, model.Image);
+
+            if (File.Exists(existingFilePath) && model.Image != "Default.png")
+            {
+                File.Delete(existingFilePath);
+            }
+
             await _postRepo.Delete(model.Id);
             await _postRepo.Save();
         }
@@ -78,7 +86,7 @@ namespace TopNews.Core.Services
 
         public async Task<List<PostDTO>> GetAll()
         {
-            var result = await _postRepo.GetAll();
+            var result = await _postRepo.GetListBySpec(new PostSpecification.All());
             return _mapper.Map<List<PostDTO>>(result);
         }
 
@@ -88,9 +96,56 @@ namespace TopNews.Core.Services
             return _mapper.Map<List<PostDTO>>(result);
         }
 
+        public async Task<PostDTO> GetById(int id)
+        {
+            if (id < 0) return null; 
+
+            var post = await _postRepo.GetByID(id);
+
+            if (post == null) return null; 
+
+            return _mapper.Map<PostDTO>(post);
+        }
+
+        public async Task<List<PostDTO>> Search(string searchString)
+        {
+            var result = await _postRepo.GetListBySpec(new PostSpecification.Search(searchString));
+            return _mapper.Map<List<PostDTO>>(result);
+        }
+
         public async Task Update(PostDTO model)
         {
-            await _postRepo.Update(_mapper.Map<Post>(model));
+            var currentPost = await _postRepo.GetByID(model.Id);
+            if (model.File.Count > 0)
+            {
+                string webPathRoot = _webHostEnvironment.WebRootPath;
+                string upload = webPathRoot + _configuration.GetValue<string>("ImageSettings:ImagePath");
+
+                string existingFilePath = Path.Combine(upload, currentPost.Image);
+
+                if (File.Exists(existingFilePath) && model.Image != "Default.png")
+                {
+                    File.Delete(existingFilePath);
+                }
+
+                var files = model.File;
+
+                string fileName = Guid.NewGuid().ToString();
+                string extension = Path.GetExtension(files[0].FileName);
+                using (var fileStream = new FileStream(Path.Combine(upload, fileName + extension), FileMode.Create))
+                {
+                    files[0].CopyTo(fileStream);
+                }
+                model.Image = fileName + extension;
+
+            }
+            else
+            {
+                model.Image = currentPost.Image;
+            }
+            var postEntity = _mapper.Map<Post>(model);
+            postEntity.Category = null;
+            await _postRepo.Update(postEntity);
             await _postRepo.Save();
         }
     }

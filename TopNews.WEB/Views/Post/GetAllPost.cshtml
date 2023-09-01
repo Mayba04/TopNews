@@ -1,5 +1,4 @@
 ﻿@using TopNews.Core.DTOs.Post;
-
 @using X.PagedList.Mvc.Core;
 @using X.PagedList.Web.Common;
 @using X.PagedList;
@@ -117,32 +116,57 @@
     </section>
     <section class="content">
         <div class="container-fluid">
+            <div class="row">
+                <div class="col-md-8 offset-md-2">
+                    <form method="post" asp-action="Search" asp-controller="Post">
+                        <div class="input-group input-group-lg">
+                            <input type="search" name="searchString" class="form-control form-control-lg" placeholder="Search...">
+                            <div class="input-group-append">
+                                <button type="submit" class="btn btn-lg btn-default">
+                                    <i class="fa fa-search"></i>
+                                </button>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        <div class="container-fluid">
 
             <div class="row">
                 <div class="col-12">
-                    @foreach (var item in Model)
-                    {
-                        <div class="card mb-4">
-                            <div class="row no-gutters">
-                                <div class="col-md-4">
-                                    <img src="@item.Image" class="card-img" alt="@item.Title">
-                                </div>
-                                <div class="col-md-8">
-                                    <div class="card-body">
-                                        <h5 class="card-title">@item.Title</h5>
-                                        <p class="card-text">@item.Description</p>
-                                        <p class="card-text">@item.Text</p>
-                                        <p class="card-text"><small class="text-muted">@item.DatePublication.ToString("yyyy-MM-dd")</small></p>
-                                        @if (User.IsInRole("Administrator"))
+                        @foreach (var item in Model)
+                        {
+                            <div class="list-group-item mb-5">
+                                <div class="row">
+                                    <div class="col-auto">
+                                        @if (item.Image == "Default.png")
                                         {
-                                            <td><a asp-controller="Category" asp-action="UpdateCategory" asp-route-id="@item.Id" class="btn btn-block btn-warning btn-sm">Edit</a></td>
-                                            <td><a asp-controller="Post" asp-action="DeletePost" asp-route-id="@item.Id" class="btn btn-block btn-danger btn-sm">Delete</a></td>
+                                            <img class="img-fluid" src="~/images/posts/Default.png" alt="Photo" style="max-height: 160px;">
                                         }
+                                        else
+                                        {
+                                            <img class="img-fluid" src="~/images/posts/@item.Image" alt="Photo" style="max-height: 160px;">
+                                        }
+                                    </div>
+                                    <div class="col px-4 mb-4">
+                                        <div class="mb-2">
+                                            <div class="float-right">@item.DatePublication</div>
+                                            <h3>@item.Title</h3>
+                                            <p class="mb-0">@Html.Raw(@item.Description)</p>
+                                        </div>
+                                        <a asp-controller="Post" asp-action="PostsByCategory" asp-route-id="@item.CategoryId" class="btn btn-default btn-sm">@item.CategoryName</a>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col">
+                                        <div class="float-right mb-4">
+                                            <td><a asp-controller="Post" asp-action="Edit" asp-route-id="@item.Id" class="btn btn-block btn-warning btn-sm">Edit</a></td>
+                                            <td><a asp-controller="Post" asp-action="DeletePost" asp-route-id="@item.Id" class="btn btn-block btn-danger btn-sm">Delete</a></td>
+                                        </div>
                                     </div>
                                 </div>
                             </div>
-                        </div>
-                    }
+                        }
                 </div>
             </div>
             <div class="row justify-content-center mt-3">
