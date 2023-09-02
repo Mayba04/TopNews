@@ -10,94 +10,10 @@
 <link rel="stylesheet" href="~/dashboard/plugins/datatables-buttons/css/buttons.bootstrap4.min.css">
 
 @{
-    ViewData["Title"] = "Categories";
+    ViewData["Title"] = "Posts";
     Layout = "~/Views/Shared/_DashboardLayout.cshtml";
 }
-@*<div class="content-wrapper">
-    <section class="content-header">
-        <div class="container-fluid">
-            <div class="row mb-2">
-                <div class="col-sm-6">
-                    <h1>All post</h1>
-                </div>
-                <div class="col-sm-6">
-                    <ol class="breadcrumb float-sm-right">
-                        <li class="breadcrumb-item"><a href="#">Home</a></li>
-                        <li class="breadcrumb-item active">Post</li>
-                    </ol>
-                </div>
-            </div>
-        </div>
-    </section>
-    <section class="content">
-        <div class="container-fluid">
-            <div class="row">
-                <div class="col-12">
-                    <div class="card">
-                        <div class="card-header">
-                            <h3 class="card-title">List of posts with minimal information</h3>
-                        </div>
 
-                        <div class="card-body">
-                            <table id="example2" class="table table-bordered table-hover dataTable dtr-inline" aria-describedby="example2_info">
-                                <thead>
-                                    <tr>
-                                        <th>Title</th>
-                                        <th>Description</th>
-                                        <th>Text</th>
-                                        <th>Image</th>
-                                        <th>DatePublication</th>
-                                        @if (@User.IsInRole("Administrator"))
-                                        {
-                                            <th>Edit</th>
-                                            <th>Delete</th>
-                                        }
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    @foreach (var item in Model)
-                                    {
-                                        <tr>
-                                            <td>@item.Title</td>
-                                            <td>@item.Description</td>
-                                            <td>@item.Text</td>
-                                            <td>@item.Image</td>
-                                            <td>@item.DatePublication.ToString("yyyy-MM-dd")</td>
-                                            @if (@User.IsInRole("Administrator"))
-                                            {
-                                                <td><a asp-controller="Category" asp-action="UpdateCategory" asp-route-id="@item.Id" class="btn btn-block btn-warning btn-sm">Edit</a></td>
-                                                <td><a asp-controller="Post" asp-action="DeletePost" asp-route-id="@item.Id" class="btn btn-block btn-danger btn-sm">Delete</a></td>
-                                            }
-                                        </tr>
-                                    }
-                                </tbody>
-                                <div class="dataTables_paginate paging_simple_numbers" id="example2_paginate">
-                                    @Html.PagedListPager(Model, page => Url.Action("index", new { page = page }), new PagedListRenderOptions()
-                                    {
-                                    ActiveLiElementClass = "active",
-                                    PageClasses = new[]{ "page-link"},
-                                    LiElementClasses=new[] { "page-item" },
-                                    UlElementClasses = new[] { "pagination","justify-content-center", "mt-3" },
-                                    LinkToNextPageFormat = "Next",
-                                    LinkToPreviousPageFormat = "Prev",
-                                    MaximumPageNumbersToDisplay = 3,
-                                    DisplayLinkToPreviousPage = PagedListDisplayMode.Never,
-                                    DisplayLinkToNextPage = PagedListDisplayMode.Never
-                                    })
-                                </div>
-                            </table>
-                        </div>
-                        <!-- /.card-body -->
-                    </div>
-                    <!-- /.card -->
-                </div>
-            </div>
-            <!-- /.col -->
-            <!-- /.row -->
-        </div>
-        <!-- /.container-fluid -->
-    </section>
-</div>*@
 <div class="content-wrapper">
     <section class="content-header">
         <div class="container-fluid">
@@ -151,7 +67,9 @@
                                     <div class="col px-4 mb-4">
                                         <div class="mb-2">
                                             <div class="float-right">@item.DatePublication</div>
-                                            <h3>@item.Title</h3>
+                                            <a href="@Url.Action("ShowPost", new { id = item.Id, slug = item.Slug })">
+                                                <h3>@item.Title</h3>
+                                            </a>
                                             <p class="mb-0">@Html.Raw(@item.Description)</p>
                                         </div>
                                         <a asp-controller="Post" asp-action="PostsByCategory" asp-route-id="@item.CategoryId" class="btn btn-default btn-sm">@item.CategoryName</a>

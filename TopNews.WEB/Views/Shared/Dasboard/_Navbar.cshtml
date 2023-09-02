@@ -47,10 +47,10 @@
         <ul class="navbar-nav ml-auto">
            
                 <li class="nav-item">
-                <a asp-action="Profile" asp-route-id="@user.Id" class="btn btn-primary">Profile</a>
+                <a asp-controller="DashboardController" asp-action="Profile" asp-route-id="@user.Id" class="btn btn-primary">Profile</a>
                 </li>
             
-            <form asp-action="Logout">
+            <form  asp-action="Logout">
                 <li class="nav-item ml-2">
                     <button class="btn btn-primary">Log out</button>
                 </li>
