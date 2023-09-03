@@ -33,7 +33,7 @@ namespace TopNews.WEB.Controllers
             var categoriesTask = await _postService.GetAll();;
             int pageSize = 20;
             int pageNumber = 1;
-            categoriesTask.Reverse();
+            //categoriesTask.Reverse();
             return View("GetAllPost", categoriesTask.ToPagedList(pageNumber, pageSize));
         }
 
@@ -138,5 +138,15 @@ namespace TopNews.WEB.Controllers
             return View("GetAllPost", posts.ToPagedList(pageNumber, pageSize));
         }
 
+        public async Task<IActionResult> ShowPost(int id)
+        {
+            var model = await _postService.GetById(id);
+            if (model == null)
+            {
+                return RedirectToAction(nameof(GetAllPost));
+            }
+            return View(model);
+        }
+        
     }
 }

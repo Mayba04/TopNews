@@ -1,0 +1,32 @@
+﻿@using TopNews.Core.DTOs.Post;
+@model PostDTO;
+
+@{
+    ViewData["Title"] = "Posts";
+    Layout = "~/Views/Shared/_DashboardLayout.cshtml";
+    <link rel="stylesheet" href="~/dashboard/plugins/summernote/summernote-bs4.min.css" />
+}
+<div class="container mt-5">
+    <div class="row">
+        <div class="col-md-8 offset-md-2">
+            <div class="card">
+                @if (Model.Image == "Default.png")
+                {
+                    <img class="img-fluid" src="~/images/posts/Default.png" alt="Photo" style="max-height: 160px;">
+                }
+                else
+                {
+                    <img class="img-fluid" src="~/images/posts/@Model.Image" alt="Photo" style="max-height: 160px;">
+                }
+                <div class="card-body">
+                    <h1 class="card-title">@Model.Title</h1>
+                    <p class="card-text">@Html.Raw(Model.Description)</p>
+                    <p class="card-text">@Html.Raw(Model.Text)</p>
+                </div>
+                <div class="card-footer">
+                    <small class="text-muted">Publication Date: @Model.DatePublication.ToString("yyyy-MM-dd")</small>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
