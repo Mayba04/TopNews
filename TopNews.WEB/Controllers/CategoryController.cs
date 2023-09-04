@@ -120,19 +120,6 @@ namespace TopNews.WEB.Controllers
             }
             ViewBag.AuthError = validationResult.Errors[0];
             return View(model);
-
-
-            //var validator = new CreateCategoryValidation();
-            //var validationResult = await validator.ValidateAsync(model);
-            //if (validationResult.IsValid)
-            //{
-            //    await _categoryService.Update(model);
-            //    return RedirectToAction(nameof(Index));
-            //}
-            //ViewBag.AuthError = validationResult.Errors[0];
-            //return View(model);
-
-
         }
     }
 }

@@ -24,7 +24,7 @@ namespace TopNews.WEB.Controllers
         public async Task<IActionResult> Index(int? id)
         {
             var categoriesTask = await _postService.GetAll(); ;
-            int pageSize = 2;
+            int pageSize = 20;
             int pageNumber = id ?? 1;
             return View("Index", categoriesTask.ToPagedList(pageNumber, pageSize));
         }
@@ -44,7 +44,7 @@ namespace TopNews.WEB.Controllers
         public async Task<IActionResult> PostsByCategory(int id)
         {
             List<PostDTO> posts = await _postService.GetByCategory(id);
-            int pageSize = 2;
+            int pageSize = 20;
             int pageNumber = 1;
             return View("Index", posts.ToPagedList(pageNumber, pageSize));
         }
@@ -54,7 +54,7 @@ namespace TopNews.WEB.Controllers
         public async Task<IActionResult> Search([FromForm] string searchString)
         {
             List<PostDTO> posts = await _postService.Search(searchString);
-            int pageSize = 2;
+            int pageSize = 20;
             int pageNumber = 1;
             return View("Index", posts.ToPagedList(pageNumber, pageSize));
         }

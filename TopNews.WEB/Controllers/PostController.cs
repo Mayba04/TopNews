@@ -28,11 +28,11 @@ namespace TopNews.WEB.Controllers
             return View();
         }
 
-        public async Task<IActionResult> GetAllPost()
+        public async Task<IActionResult> GetAllPost(int? page )
         {
             var categoriesTask = await _postService.GetAll();;
             int pageSize = 20;
-            int pageNumber = 1;
+            int pageNumber = page ?? 1;
             //categoriesTask.Reverse();
             return View("GetAllPost", categoriesTask.ToPagedList(pageNumber, pageSize));
         }

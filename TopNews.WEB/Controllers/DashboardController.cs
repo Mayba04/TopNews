@@ -72,15 +72,6 @@ namespace TopNews.WEB.Controllers
                 return RedirectToAction(nameof(Login));
             }
             return View();
-
-            //await HttpContext.SignOutAsync();
-
-
-            //foreach (var cookie in Request.Cookies.Keys)
-            //{
-            //    Response.Cookies.Delete(cookie);
-            //}
-
         }
 
         public async Task<IActionResult> GetAll()
