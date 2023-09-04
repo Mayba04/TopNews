@@ -9,11 +9,6 @@
 <link rel="stylesheet" href="~/dashboard/plugins/datatables-responsive/css/responsive.bootstrap4.min.css">
 <link rel="stylesheet" href="~/dashboard/plugins/datatables-buttons/css/buttons.bootstrap4.min.css">
 
-@{
-    ViewData["Title"] = "Categories";
-    Layout = "~/Views/Shared/_DashboardLayout.cshtml";
-}
-
 <div class="content-wrapper">
     <section class="content-header">
         <div class="container-fluid">
@@ -34,7 +29,7 @@
         <div class="container-fluid">
             <div class="row">
                 <div class="col-md-8 offset-md-2">
-                    <form method="post" asp-action="Search" asp-controller="Post">
+                    <form method="post" asp-action="Search" asp-controller="Home">
                         <div class="input-group input-group-lg">
                             <input type="search" name="searchString" class="form-control form-control-lg" placeholder="Search...">
                             <div class="input-group-append">
@@ -66,39 +61,35 @@
                                     </div>
                                     <div class="col px-4 mb-4">
                                         <div class="mb-2">
-                                            <div class="float-right">@item.DatePublication</div>
-                                            <h3>@item.Title</h3>
+                                            <div class="float-right">@item.DatePublication.ToString("yyyy-MM-dd")</div>
+                                            <a href="@Url.Action("ShowPost", new { id = item.Id, slug = item.Slug })">
+                                                <h3>@item.Title</h3>
+                                            </a>
                                             <p class="mb-0">@Html.Raw(@item.Description)</p>
                                         </div>
-                                        <a asp-controller="Post" asp-action="PostsByCategory" asp-route-id="@item.CategoryId" class="btn btn-default btn-sm">@item.CategoryName</a>
-                                    </div>
-                                </div>
-                                <div class="row">
-                                    <div class="col">
-                                        <div class="float-right mb-4">
-                                            <td><a asp-controller="Post" asp-action="Edit" asp-route-id="@item.Id" class="btn btn-block btn-warning btn-sm">Edit</a></td>
-                                            <td><a asp-controller="Post" asp-action="DeletePost" asp-route-id="@item.Id" class="btn btn-block btn-danger btn-sm">Delete</a></td>
-                                        </div>
+                                        <a asp-controller="Home" asp-action="PostsByCategory" asp-route-id="@item.CategoryId" class="btn btn-default btn-sm">@item.CategoryName</a>
                                     </div>
                                 </div>
                             </div>
                         }
-                    </div>
-                </div>
-                <div class="row justify-content-center mt-3">
-                    <div class="dataTables_paginate paging_simple_numbers" id="example2_paginate">
-                        @Html.PagedListPager(Model, page => Url.Action("index", new { page = page }), new PagedListRenderOptions()
+                       <div class="dataTables_paginate paging_simple_numbers" id="example2_paginate">
+                            @Html.PagedListPager(Model, page => Url.Action("index", new { id = page }), new PagedListRenderOptions()
+                            {
+                            ActiveLiElementClass = "active",
+                            PageClasses = new[]{ "page-link"},
+                            LiElementClasses=new[] { "page-item" },
+                            UlElementClasses = new[] { "pagination","justify-content-center", "mt-3" },
+                            LinkToNextPageFormat = "Next",
+                            LinkToPreviousPageFormat = "Prev",
+                            MaximumPageNumbersToDisplay = 3,
+                            DisplayLinkToPreviousPage = PagedListDisplayMode.Never,
+                            DisplayLinkToNextPage = PagedListDisplayMode.Never
+                            })
+                        </div>
+                        @if (Model.Count() <= 0)
                         {
-                        ActiveLiElementClass = "active",
-                        PageClasses = new[]{ "page-link"},
-                        LiElementClasses=new[] { "page-item" },
-                        UlElementClasses = new[] { "pagination","justify-content-center", "mt-3" },
-                        LinkToNextPageFormat = "Next",
-                        LinkToPreviousPageFormat = "Prev",
-                        MaximumPageNumbersToDisplay = 3,
-                        DisplayLinkToPreviousPage = PagedListDisplayMode.Never,
-                        DisplayLinkToNextPage = PagedListDisplayMode.Never
-                        })
+                            <h2>No posts were found for your query.</h2>
+                        }
                     </div>
                 </div>
             </div>
