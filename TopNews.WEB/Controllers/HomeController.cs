@@ -40,7 +40,6 @@ namespace TopNews.WEB.Controllers
             }
         }
 
-        [Authorize(Roles = "Administrator")]
         public async Task<IActionResult> PostsByCategory(int id)
         {
             List<PostDTO> posts = await _postService.GetByCategory(id);

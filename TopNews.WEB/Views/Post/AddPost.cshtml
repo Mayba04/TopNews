@@ -74,19 +74,38 @@
                                             <label>Category</label>
                                             <select asp-for="CategoryId" asp-items="ViewBag.CategoryList" class="custom-select form-control-border"></select>
                                         </div>
-                                        <div class="form-group">
+                                      @*  <div class="form-group">
                                             <label>Image</label>
                                             <div class=" input-group">
                                                 <div class="custom-file">
                                                     <div class="custom-file">
-                                                        <input type="file" name="File" asp-for="@Model.File" class="custom-file-input" />
+                                                        <input type="file" name="File" id="imageInput" asp-for="@Model.File" class="custom-file-input" />
                                                         <label class="custom-file-label">Coose file...</label>
                                                     </div>
                                                 </div>
                                             </div>
                                         </div>
+                                        *@
+                                        <div class="form-group">
+                                            <label>Cropped Image</label>
+                                            <div class="input-group">
+                                                <div class="custom-file">
+                                                    <input type="file" name="File" id="imageInput" asp-for="@Model.File" class="custom-file-input" />
+                                                    <label class="custom-file-label">Choose file...</label>
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                        <div class="form-group">
+                                            <label>Image Preview</label>
+                                            <div id="imageContainer" style="max-width: 100%; max-height: 500px; overflow: hidden;">
+                                                <img src="" id="imagePreview" style="max-width: 100%;" />
+                                            </div>
+                                        </div>
+                                      
                                         <div class="card-footer">
                                             <button type="submit" class="btn btn-primary">Create</button>
+                                            
                                         </div>
                                     </div>
                                 </form>
@@ -105,16 +124,60 @@
 
 @section Scripts{
     <script src="~/dashboard/plugins/summernote/summernote-bs5.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.5.12/cropper.min.js"></script>
 
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.5.12/cropper.min.css" />
     <script>
-        $(function() {
+        $(function () {
             $('#summernote').summernote({
                 minHeight: 200
-            })
+            });
 
             $('#text').summernote({
                 minHeight: 200
-            })
-        })
+            });
+
+            var image = document.getElementById('imagePreview');
+            var cropper;
+
+            $('#imageInput').change(function (e) {
+                var files = e.target.files;
+                var file = files[0];
+
+                if (file) {
+                    var reader = new FileReader();
+
+                    reader.onload = function (e) {
+                        image.src = e.target.result;
+
+                        cropper = new Cropper(image, {
+                            aspectRatio: 16 / 9,
+                            viewMode: 0,
+                            cropBoxResizable: true,
+                            dragMode: 'move',
+                            autoCrop: true,
+                            autoCropArea: 1,
+                            checkCrossOrigin: true
+                        });
+                    };
+
+                    reader.readAsDataURL(file);
+                }
+            });
+
+            function dataURLtoBlob(dataURL) {
+                var parts = dataURL.split(';base64,');
+                var contentType = parts[0].split(':')[1];
+                var raw = window.atob(parts[1]);
+                var rawLength = raw.length;
+                var uInt8Array = new Uint8Array(rawLength);
+
+                for (var i = 0; i < rawLength; ++i) {
+                    uInt8Array[i] = raw.charCodeAt(i);
+                }
+
+                return new Blob([uInt8Array], { type: contentType });
+            }
+        });
     </script>
 }
