@@ -31,6 +31,8 @@ namespace TopNews.Core.DTOs.Post
 
         public int CategoryId { get; set; }
 
+        public IFormFileCollection CroppedImage { get; set; }
+
         public string CategoryName { get; set; }
         public IFormFileCollection File { get; set; }
         public string Slug => Title?

@@ -5,6 +5,7 @@
     ViewData["Title"] = "Posts";
     Layout = "~/Views/Shared/_DashboardLayout.cshtml";
     <link rel="stylesheet" href="~/dashboard/plugins/summernote/summernote-bs4.min.css" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.5.12/cropper.min.css" />
 }
 
 <!-- Content Wrapper. Contains page content -->
@@ -56,7 +57,7 @@
                                     <span class="text-danger mt-3">@ViewBag.AuthError</span>
                                 }
 
-                                <form method="post" asp-action="AddPost" enctype="multipart/form-data">
+                                <form method="post" id="formElem" asp-action="AddPost" enctype="multipart/form-data">
                                     <div class="card-body">
                                         <div class="form-group">
                                             <label>Title</label>
@@ -74,41 +75,41 @@
                                             <label>Category</label>
                                             <select asp-for="CategoryId" asp-items="ViewBag.CategoryList" class="custom-select form-control-border"></select>
                                         </div>
-                                      @*  <div class="form-group">
-                                            <label>Image</label>
-                                            <div class=" input-group">
-                                                <div class="custom-file">
-                                                    <div class="custom-file">
-                                                        <input type="file" name="File" id="imageInput" asp-for="@Model.File" class="custom-file-input" />
-                                                        <label class="custom-file-label">Coose file...</label>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        </div>
-                                        *@
+
                                         <div class="form-group">
                                             <label>Cropped Image</label>
                                             <div class="input-group">
                                                 <div class="custom-file">
-                                                    <input type="file" name="File" id="imageInput" asp-for="@Model.File" class="custom-file-input" />
+                                                    <input input type="file" name="File" id="imageInput" asp-for="@Model.File" class="custom-file-input" />
                                                     <label class="custom-file-label">Choose file...</label>
                                                 </div>
                                             </div>
                                         </div>
 
                                         <div class="form-group">
-                                            <label>Image Preview</label>
+                                            <label>Cropped Image</label>
                                             <div id="imageContainer" style="max-width: 100%; max-height: 500px; overflow: hidden;">
                                                 <img src="" id="imagePreview" style="max-width: 100%;" />
                                             </div>
                                         </div>
-                                      
+
+                                        <div class="form-group">
+                                            <label>Cropped Image Result</label>
+                                            <div id="croppedImageContainer" style="max-width: 100%; max-height: 500px; overflow: hidden;">
+                                                <img src="" id="croppedImage" name="File" style="max-width: 100%;" />
+                                            </div>
+                                        </div>
+
+                                        <div hidden>
+                                            <input type="file" id="CroppedImage" name="CroppedImage" asp-for="@Model.CroppedImage" />
+                                        </div>
                                         <div class="card-footer">
-                                            <button type="submit" class="btn btn-primary">Create</button>
+                                            <button type="submit" id="createButton" class="btn btn-primary">Create</button>
                                             
                                         </div>
                                     </div>
-                                </form>
+                                </form> 
+                                <button id="cropButton" class="btn btn-primary">Crop</button>
                             </div>
                         </div>
                     </div>
@@ -122,62 +123,82 @@
     <!-- /.content -->
 </div>
 
-@section Scripts{
-    <script src="~/dashboard/plugins/summernote/summernote-bs5.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.5.12/cropper.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.5.12/cropper.min.js"></script>
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.5.12/cropper.min.css" />
-    <script>
-        $(function () {
-            $('#summernote').summernote({
-                minHeight: 200
-            });
+<script>
+    $(document).ready(function () {
+        var $imageInput = $("#imageInput");
+        var $imagePreview = $("#imagePreview");
+        var $imageContainer = $("#imageContainer");
+        var cropper;
 
-            $('#text').summernote({
-                minHeight: 200
-            });
+        $imageInput.change(function () {
+            var file = this.files[0];
+            console.log("File " + this.files[0].name);
+            if (file) {
+                var reader = new FileReader();
+                reader.onload = function (e) {
+                    $imageContainer.show();
+                    $imagePreview.attr("src", e.target.result);
 
-            var image = document.getElementById('imagePreview');
-            var cropper;
-
-            $('#imageInput').change(function (e) {
-                var files = e.target.files;
-                var file = files[0];
-
-                if (file) {
-                    var reader = new FileReader();
-
-                    reader.onload = function (e) {
-                        image.src = e.target.result;
-
-                        cropper = new Cropper(image, {
-                            aspectRatio: 16 / 9,
-                            viewMode: 0,
-                            cropBoxResizable: true,
-                            dragMode: 'move',
-                            autoCrop: true,
-                            autoCropArea: 1,
-                            checkCrossOrigin: true
-                        });
-                    };
-
-                    reader.readAsDataURL(file);
+                    cropper = new Cropper($imagePreview[0], {
+                        aspectRatio: 16 / 9, 
+                        viewMode: 1, 
+                    });
+                };
+                reader.readAsDataURL(file);
+            } else {
+                $imageContainer.hide();
+                $imagePreview.attr("src", "");
+                if (cropper) {
+                    cropper.destroy(); 
                 }
-            });
-
-            function dataURLtoBlob(dataURL) {
-                var parts = dataURL.split(';base64,');
-                var contentType = parts[0].split(':')[1];
-                var raw = window.atob(parts[1]);
-                var rawLength = raw.length;
-                var uInt8Array = new Uint8Array(rawLength);
-
-                for (var i = 0; i < rawLength; ++i) {
-                    uInt8Array[i] = raw.charCodeAt(i);
-                }
-
-                return new Blob([uInt8Array], { type: contentType });
             }
         });
-    </script>
-}
+
+        $("#cropButton").click(function () {
+            var croppedImageDataURL = cropper.getCroppedCanvas().toDataURL("image/png");
+           //console.log(croppedImageDataURL);
+            $("#croppedImage").attr("src", croppedImageDataURL);
+
+            
+            //var base64Data = croppedImageDataURL.split(',')[1];
+            //var byteCharacters = atob(base64Data);
+            //var byteNumbers = new Array(byteCharacters.length);
+
+            //for (var j = 0; j < byteCharacters.length; j++) {
+            //    byteNumbers[j] = byteCharacters.charCodeAt(j);
+            //}
+
+            //var byteArray = new Uint8Array(byteNumbers);
+            //var blob = new Blob([byteArray], { type: 'image/png' });
+            //console.log(blob)
+            //var formData = new FormData(formElem);
+            //formData.set('file', blob, 'cropped.png');
+            //var croppedImageInput = document.getElementById('CroppedImage');
+            //var croppedImageFile = croppedImageInput.files[0];
+            //formData.append('CroppedImage', croppedImageFile);
+
+            //console.log(formData);
+
+
+
+
+            //var croppedImageInput = document.getElementById('CroppedImage'); // Отримати поле вводу файлу за ідентифікатором
+
+            //var croppedImageValue = croppedImageInput.value; // Отримати значення поля
+            //console.log(croppedImageInput);
+            //console.log("value" + croppedImageValue);
+            //if (croppedImageInput && croppedImageInput.files.length > 0) {
+            //    // Поле вводу файлу існує і в ньому є вибрані файли
+            //    var selectedFile = croppedImageInput.files[0];
+            //    console.log('Вибрано файл:', selectedFile);
+            //} else {
+            //    console.log('Поле вводу файлу порожнє або не існує');
+            //}
+        });
+
+        
+    });
+</script>
