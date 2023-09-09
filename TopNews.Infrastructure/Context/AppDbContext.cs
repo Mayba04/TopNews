@@ -38,6 +38,7 @@ namespace TopNews.Infrastructure.Context
 
             modelBuilder.SeedCategory();
             modelBuilder.SeedPost();
+            modelBuilder.SeedDashdoardAccesses();
         }
 
     }

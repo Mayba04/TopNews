@@ -5,6 +5,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using TopNews.Core.AutoMapper.Categories;
+using TopNews.Core.AutoMapper.Ip;
 using TopNews.Core.AutoMapper.Posts;
 using TopNews.Core.AutoMapper.User;
 using TopNews.Core.Interfaces;
@@ -20,6 +21,7 @@ namespace TopNews.Core
             services.AddTransient<EmailServices>();
             services.AddScoped<ICategoryService, CategoryService>();
             services.AddScoped<IPostService, PostService>();
+            services.AddScoped<IDashdoardAccessService, DashboardAccsessService>();
         }
 
         public static void AddMapping(this IServiceCollection services) 
@@ -27,6 +29,7 @@ namespace TopNews.Core
             services.AddAutoMapper(typeof(AutoMapperUserProfile));
             services.AddAutoMapper(typeof(AutoMapperCategoryProfile));
             services.AddAutoMapper(typeof(AutoMapperPostProfile));
+            services.AddAutoMapper(typeof(AutoMapperDashboardAccsessProfile));
         }
     }
 }

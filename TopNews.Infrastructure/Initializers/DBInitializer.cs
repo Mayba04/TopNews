@@ -99,6 +99,16 @@ namespace TopNews.Infrastructure.Initializers
           );
         }
 
+        public static void SeedDashdoardAccesses(this ModelBuilder model)
+        {
+            model.Entity<DashboardAccess>().HasData(
+                new DashboardAccess()
+                {
+                    Id = 1,
+                    IpAddress = "0.0.0.0",
+                }
+            );
+        }
 
     }
 }

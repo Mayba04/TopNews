@@ -128,6 +128,37 @@
                 </li>
 
             </ul>
+            @if (User.IsInRole("Administrator"))
+            {
+                <ul class="nav nav-pills nav-sidebar flex-column" data-widget="treeview" role="menu" data-accordion="false">
+                    <li class="nav-item">
+                        <a href="#" class="nav-link active">
+                            <i class="fas fa-address-card"></i>
+                            <p>
+                                Ip
+                                <i class="fas fa-angle-left right"></i>
+                            </p>
+                        </a>
+                        <ul class="nav nav-treeview">
+                            <li class="nav-item">
+                                <a asp-controller="Ip" asp-action="GetAll" class="nav-link">
+                                    <i class="far fa-circle nav-icon"></i>
+                                    <p>All IP</p>
+                                </a>
+                            </li>
+
+                            <li class="nav-item">
+                                <a asp-controller="Ip" asp-action="Create" class="nav-link">
+                                    <i class="far fa-circle nav-icon"></i>
+                                    <p>Add Ip</p>
+                                </a>
+                            </li>
+                       
+                        </ul>
+                    </li>
+
+                </ul> 
+            }
         </nav>
     </div>
     <!-- /.sidebar -->
