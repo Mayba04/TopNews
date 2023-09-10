@@ -19,10 +19,12 @@ namespace TopNews.WEB.Controllers
 
         private readonly UserService _userService;
         private readonly ICategoryService _categoryService;
-        public DashboardController(UserService userService, ICategoryService categoryService)
+        private readonly IDashdoardAccessService _IPService;
+        public DashboardController(UserService userService, ICategoryService categoryService, IDashdoardAccessService iPService)
         {
             _userService = userService;
             _categoryService = categoryService;
+            _IPService = iPService;
         }
 
         public IActionResult Index()
@@ -31,8 +33,14 @@ namespace TopNews.WEB.Controllers
         }
 
         [AllowAnonymous]//GET
-        public IActionResult Login()
+        public async Task<IActionResult> Login()
         {
+            string? ipaddress = HttpContext.Connection.RemoteIpAddress?.ToString();
+            var networkaddressdto = await _IPService.Get(ipaddress);
+            if (networkaddressdto == null)
+            {
+                return RedirectToAction(nameof(NotFound));
+            }
             var user = HttpContext.User.Identity.IsAuthenticated;
             if (user)
             {
