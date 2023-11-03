@@ -1,6 +1,7 @@
 using TopNews.Core;
 using TopNews.Infrastructure;
 using TopNews.Infrastructure.Initializers;
+using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -9,7 +10,6 @@ string connStr = builder.Configuration.GetConnectionString("DefaulConnection");
 
 //Databse context
 builder.Services.AddDbCotext(connStr);
-
 
 //Add repositories
 builder.Services.AddRepositories();
@@ -27,6 +27,7 @@ builder.Services.AddMapping();
 builder.Services.AddControllersWithViews();
 
 var app = builder.Build();
+
 
 // Configure the HTTP request pipeline.
 if (!app.Environment.IsDevelopment())

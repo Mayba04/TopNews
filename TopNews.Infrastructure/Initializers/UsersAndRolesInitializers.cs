@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using System;
 using System.Collections.Generic;
@@ -19,6 +20,7 @@ namespace TopNews.Infrastructure.Initializers
             {
                 var context = serviceScope.ServiceProvider.GetService<AppDbContext>();
                 UserManager<AppUser> userManager = serviceScope.ServiceProvider.GetRequiredService<UserManager<AppUser>>();
+                context.Database.Migrate();
                 if (userManager.FindByEmailAsync("admi@gmail.com").Result == null) 
                 {
                     AppUser admin = new AppUser()
