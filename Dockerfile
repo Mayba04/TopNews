@@ -16,7 +16,7 @@ ENV PATH $PATH:/root/.dotnet/tools
 
 RUN dotnet-ef database update --startup-project "TopNews.WEB" --project "TopNews.Infrastructure/TopNews.Infrastructure.csproj"
 
-RUN dotnet publish "TopNews.Web/TopNews.WEB.csproj" -c Release -o /app/build
+RUN dotnet publish "TopNews.WEB/TopNews.WEB.csproj" -c Release -o /app/build
 WORKDIR /app/build
 EXPOSE 80
 
