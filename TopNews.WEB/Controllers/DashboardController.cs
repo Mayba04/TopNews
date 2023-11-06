@@ -39,7 +39,7 @@ namespace TopNews.WEB.Controllers
             var networkaddressdto = await _IPService.Get(ipaddress);
             //if (networkaddressdto == null)
             //{
-                return RedirectToAction(nameof(NotFound));
+                //return RedirectToAction(nameof(NotFound));
             //}
             var user = HttpContext.User.Identity.IsAuthenticated;
             if (user)
