@@ -37,10 +37,10 @@ namespace TopNews.WEB.Controllers
         {
             string? ipaddress = HttpContext.Connection.RemoteIpAddress?.ToString();
             var networkaddressdto = await _IPService.Get(ipaddress);
-            if (networkaddressdto == null)
-            {
+            //if (networkaddressdto == null)
+            //{
                 return RedirectToAction(nameof(NotFound));
-            }
+            //}
             var user = HttpContext.User.Identity.IsAuthenticated;
             if (user)
             {
