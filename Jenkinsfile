@@ -25,7 +25,7 @@ pipeline  {
             steps {
                 echo 'Creating docker image ...'
                 dir('.'){
-                    sh "docker build -t Mayba04/TopNews . "
+                    sh "docker build -t mayba04/TopNews . "
                 }
             }
         }
@@ -43,7 +43,7 @@ pipeline  {
             steps {
                 echo " ============== pushing image =================="
                 sh '''
-                docker push Mayba04/TopNews:latest
+                docker push mayba04/TopNews:latest
                 '''
             }
         }
@@ -51,7 +51,7 @@ pipeline  {
             steps {
                 echo " ============== pushing image =================="
                 sh '''
-                docker run -d --name TopNews -p 80:80 Mayba04/TopNews:latest
+                docker run -d --name TopNews -p 80:80 mayba04/TopNews:latest
                 '''
             }
         }
